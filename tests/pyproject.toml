@@ -1,0 +1,7 @@
+[install_requires]
+django = "<3"
+mysqlclient = "*"
+
+[extras_require.dev]
+ipython = "*"
+django-debug-toolbar = "*"
