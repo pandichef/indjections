@@ -147,6 +147,7 @@ setup(
         "dev": [
             'django-debug-toolbar',
             'pytest',
+            'pytest-mock',
             'ipython',
             'pytest-cov',
             'pytest-django',

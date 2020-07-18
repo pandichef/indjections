@@ -3,6 +3,7 @@ INSTALLED_APPS += ['hijack', 'compat']
 """
 
 urls = """
+from django.urls import include
 urlpatterns += [path('hijack/', include('hijack.urls', namespace='hijack'))]
 """
 

@@ -10,21 +10,32 @@ import toml
 
 def indject_string_at(original_string: str, string_to_append: str,
                       reference_regex: str, after: bool) -> str:
+    """
+    >>> original_string = '<html>hello</html>'
+    >>> indject_string_at(original_string, 'world', None, True)
+    '<html>hello</html>world'
+    >>> indject_string_at(original_string, 'world', None, False)
+    'world<html>hello</html>'
+    >>> indject_string_at(original_string, 'world', 'hello', True)
+    '<html>helloworld</html>'
+    >>> indject_string_at(original_string, 'world', 'hello', False)
+    '<html>worldhello</html>'
+    """
     if reference_regex is None and after:
         return original_string + string_to_append
     elif reference_regex is None and not after:
         return string_to_append + original_string
     elif after:
-        return re.sub(reference_regex, r'\1' + string_to_append, original_string)
+        return re.sub(r'(' + reference_regex + r')', r'\1' + string_to_append, original_string)
     else:
-        return re.sub(reference_regex, string_to_append + r'\1', original_string)
+        return re.sub(r'(' + reference_regex + r')', string_to_append + r'\1', original_string)
 
 
 def indject_string(file_name, package_name, insert_string, is_template=False,
                    reference_regex=None, after=True):
     if is_template:
         _o = '{'
-        _o2 = r'\{'
+        _o2 = r'\{'  # { is apparently a special regex character
         _c = '}'
     else:
         _o = ''

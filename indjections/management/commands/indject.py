@@ -55,7 +55,7 @@ class Command(BaseCommand):
                 try:
                     indject_string(settings.INDJECTIONS_SETTINGS['BASE_HTML'],
                                    package + '__base_head', indjections.base_head, after=False,
-                                   reference_regex=r"(</head>)", is_template=True)
+                                   reference_regex="</head>", is_template=True)
                 except AttributeError:
                     print(f"{package} has no base_head.")
 
@@ -63,7 +63,7 @@ class Command(BaseCommand):
                 try:
                     indject_string(settings.INDJECTIONS_SETTINGS['BASE_HTML'],
                                    package + '__base_body', indjections.base_body, after=True,
-                                   reference_regex=r"(<body[\s\S]*?>)", is_template=True)  # https://stackoverflow.com/questions/6441015/symbol-for-any-number-of-any-characters-in-regex
+                                   reference_regex="<body[\s\S]*?>", is_template=True)  # https://stackoverflow.com/questions/6441015/symbol-for-any-number-of-any-characters-in-regex
                 except AttributeError:
                     print(f"{package} has no base_body.")
             except ModuleNotFoundError:
