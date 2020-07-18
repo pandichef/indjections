@@ -42,8 +42,7 @@ def test_unlocked(setup_and_cleanup):
         final_settings_string = fn.read()
     with open(urls.__file__, 'r') as fn:
         final_urls_string = fn.read()
-    settings_insertstring = """
-### block: django-debug-toolbar ###
+    settings_insertstring = """### block: django-debug-toolbar ###
 if DEBUG:
     INSTALLED_APPS += ['debug_toolbar']
     MIDDLEWARE = ['debug_toolbar.middleware.DebugToolbarMiddleware'] + MIDDLEWARE
@@ -53,8 +52,7 @@ if DEBUG:
         INTERNAL_IPS = ['127.0.0.1']
 ### endblock: django-debug-toolbar ###
 """
-    urls_insertstring = """
-### block: django-debug-toolbar ###
+    urls_insertstring = """### block: django-debug-toolbar ###
 from django.conf import settings
 from django.urls import include, path
 
@@ -71,8 +69,7 @@ if settings.DEBUG:
 
 def test_locked(setup_and_cleanup):
     original_settings_string, original_urls_string = setup_and_cleanup
-    locked_text = """
-### block: django-debug-toolbar/lock ###
+    locked_text = """### block: django-debug-toolbar/lock ###
 print('This is locked.)
 ### endblock: django-debug-toolbar ###
 """

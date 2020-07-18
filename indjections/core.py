@@ -34,16 +34,19 @@ def indject_string(file_name, package_name, insert_string, is_template=False,
     with open(file_name, 'r') as f:  # https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files
         original_file_string = f.read()
 
-    if re.search(f"""\n\n{_o2}### block: {package_name}/lock ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}""",
+    # if re.search(f"""\n\n{_o2}### block: {package_name}/lock ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}""",
+    if re.search(f"""{_o2}### block: {package_name}/lock ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}\n""",
             original_file_string):
         print(f"{package_name} block found and locked in {basename(file_name)}. Doing nothing.")
     else:
-        file_string = re.sub(f"""\n\n{_o2}### block: {package_name} ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}""",
+        # file_string = re.sub(f"""\n\n{_o2}### block: {package_name} ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}""",
+        file_string = re.sub(f"""{_o2}### block: {package_name} ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}\n""",
             "", original_file_string)
         found_block_and_deleted = file_string != original_file_string
-        file_string = indject_string_at(file_string, f"""
-{_o}### block: {package_name} ###{_c}{insert_string}{_o}### endblock: {package_name} ###{_c}
-""", reference_regex, after)
+        file_string = indject_string_at(
+            file_string,
+            f"""{_o}### block: {package_name} ###{_c}{insert_string}{_o}### endblock: {package_name} ###{_c}\n""",
+            reference_regex, after)
             
         # file_string += f"""
         # {_o}### block: {package_name} ###{_c}{insert_string}{_o}### endblock: {package_name} ###{_c}

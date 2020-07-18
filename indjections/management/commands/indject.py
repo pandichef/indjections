@@ -68,3 +68,4 @@ class Command(BaseCommand):
                     print(f"{package} has no base_body.")
             except ModuleNotFoundError:
                 print(f"{package} has no defined indjections.")
+            print('################################################################################')
