@@ -29,14 +29,6 @@ def setup_and_cleanup(request):
     return original_settings_string, original_urls_string
 
 
-def read_tests_pyproject():
-    import os
-    test_dir = os.path.dirname(os.path.abspath(__file__))
-    with open(os.path.join(test_dir, 'pyproject.toml'), 'r') as fn:
-        toml_string = fn.read()
-    return toml_string
-
-
 def test_unlocked(setup_and_cleanup):
     original_settings_string, original_urls_string = setup_and_cleanup
     # with mock.patch('builtins.open',

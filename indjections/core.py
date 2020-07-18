@@ -8,25 +8,52 @@ import toml
 # 4. locked = don't do anything
 
 
-def indject_string(file_name, package_name, insert_string):
-        with open(file_name, 'r') as f:  # https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files
-            original_file_string = f.read()
-        if re.search(f"""\n\n### block: {package_name}/lock ###(\n|.)*### endblock: {package_name} ###""",
-                original_file_string):
-            print(f"{package_name} block found and locked in {basename(file_name)}. Doing nothing.")
+def indject_string_at(original_string: str, string_to_append: str,
+                      reference_regex: str, after: bool) -> str:
+    if reference_regex is None and after:
+        return original_string + string_to_append
+    elif reference_regex is None and not after:
+        return string_to_append + original_string
+    elif after:
+        return re.sub(reference_regex, r'\1' + string_to_append, original_string)
+    else:
+        return re.sub(reference_regex, string_to_append + r'\1', original_string)
+
+
+def indject_string(file_name, package_name, insert_string, is_template=False,
+                   reference_regex=None, after=True):
+    if is_template:
+        _o = '{'
+        _o2 = r'\{'
+        _c = '}'
+    else:
+        _o = ''
+        _o2 = ''
+        _c = ''
+
+    with open(file_name, 'r') as f:  # https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files
+        original_file_string = f.read()
+
+    if re.search(f"""\n\n{_o2}### block: {package_name}/lock ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}""",
+            original_file_string):
+        print(f"{package_name} block found and locked in {basename(file_name)}. Doing nothing.")
+    else:
+        file_string = re.sub(f"""\n\n{_o2}### block: {package_name} ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}""",
+            "", original_file_string)
+        found_block_and_deleted = file_string != original_file_string
+        file_string = indject_string_at(file_string, f"""
+{_o}### block: {package_name} ###{_c}{insert_string}{_o}### endblock: {package_name} ###{_c}
+""", reference_regex, after)
+            
+        # file_string += f"""
+        # {_o}### block: {package_name} ###{_c}{insert_string}{_o}### endblock: {package_name} ###{_c}
+        # """  # implicitly adds to the end of the file
+        with open(file_name, 'w') as f:  # https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files
+            f.write(file_string)
+        if found_block_and_deleted:
+            print(f"{package_name} block found and deleted in {basename(file_name)}. Inserting new block.")
         else:
-            file_string = re.sub(f"""\n\n### block: {package_name} ###(\n|.)*### endblock: {package_name} ###""",
-                "", original_file_string)
-            found_block_and_deleted = file_string != original_file_string
-            file_string += f"""
-### block: {package_name} ###{insert_string}### endblock: {package_name} ###
-"""
-            with open(file_name, 'w') as f:  # https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files
-                f.write(file_string)
-            if found_block_and_deleted:
-                print(f"{package_name} block found and deleted in {basename(file_name)}. Inserting new block.")
-            else:
-                print(f"{package_name} block not found in {basename(file_name)}. Inserting new block.")
+            print(f"{package_name} block not found in {basename(file_name)}. Inserting new block.")
 
 
 
