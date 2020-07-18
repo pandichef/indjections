@@ -32,11 +32,16 @@ class Command(BaseCommand):
         # install_requires = dct2lst(dependencies['install_requires'])
         # extras_require = {'dev': dct2lst(dependencies['extras_require']['dev'])}
 
-        with open(os.environ.get('PYPROJECT_PATH', 'pyproject.toml'), 'r') as f:
+        # with open(os.environ.get('PYPROJECT_PATH', 'pyproject.toml'), 'r') as f:
+        with open(settings.INDJECTIONS_SETTINGS['TOML_FILE'], 'r') as f:
             import toml
             # install_requires, extras_require = dependencies
             # assert False, f.read()
-            install_requires, extras_require = parse_toml(f.read())
+            # install_requires, extras_require = parse_toml(f.read(), 'install_requires', 'requires_extra.dev')
+            # install_requires, extras_require = parse_toml(f.read(), 'install_requires', 'extras_require.dev')
+            install_requires, extras_require = parse_toml(
+                f.read(), settings.INDJECTIONS_SETTINGS['PACKAGES_KEY'],
+                settings.INDJECTIONS_SETTINGS['DEV_PACKAGES_KEY'])
 
         # assert False, tobeinstalled
 
@@ -44,10 +49,28 @@ class Command(BaseCommand):
         # install_requires = [x + dct[x] if dct[x] != "*" else x for x in dct]
         # dct = tobeinstalled['extras_require']['dev']
         # extras_require = [x + dct[x] if dct[x] != "*" else x for x in dct]
+        # assert False, install_requires
+
         installed_packages = install_requires + extras_require
 
-        if 'django-debug-toolbar' in installed_packages:
-            indject_string(settings.__file__, 'django-debug-toolbar', """
+        for package in installed_packages:
+            from importlib import import_module
+            try:
+                indjections = import_module(f'indjections.packages.{package}')
+                try:
+                    indject_string(settings.__file__, package, indjections.settings)
+                except AttributeError:
+                    print(f"{package} has no settings indjection.")
+                try:
+                    indject_string(urls.__file__, package, indjections.urls)
+                except AttributeError:
+                    print(f"{package} has no urls indjection.")
+            except ModuleNotFoundError:
+                print(f"{package} has no defined indjections.")
+
+'''
+            if package == 'django-debug-toolbar':
+                indject_string(settings.__file__, package, """
 if DEBUG:
     INSTALLED_APPS += ['debug_toolbar']
     MIDDLEWARE = ['debug_toolbar.middleware.DebugToolbarMiddleware'] + MIDDLEWARE
@@ -57,7 +80,7 @@ if DEBUG:
         INTERNAL_IPS = ['127.0.0.1']
 """)
 
-            indject_string(urls.__file__, 'django-debug-toolbar', """
+                indject_string(urls.__file__, package, """
 from django.conf import settings
 from django.urls import include, path
 
@@ -68,12 +91,16 @@ if settings.DEBUG:
     ] + urlpatterns
 """)
 
-        if 'djangorestframework' in installed_packages:
-            indject_string(settings.__file__, 'djangorestframework', """
+            elif package == 'djangorestframework':
+                indject_string(settings.__file__, package, """
 INSTALLED_APPS += ['rest_framework']
 """)
 
-            indject_string(urls.__file__, 'djangorestframework', """
+                indject_string(urls.__file__, package, """
 from django.urls import include
 urlpatterns += [path('api-auth/', include('rest_framework.urls'))]
 """)
+
+            else:
+                print(f"{package} has no defined indjections.")
+'''

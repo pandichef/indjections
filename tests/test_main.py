@@ -43,7 +43,7 @@ def test_unlocked(setup_and_cleanup):
     #                 mock.mock_open(read_data=read_tests_pyproject()),
     #                 create=True) as m:
     commandobj = Command()
-    os.environ['PYPROJECT_PATH'] = './tests/pyproject.toml'
+    # os.environ['PYPROJECT_PATH'] = './tests/pyproject.toml'
     # os.environ['PYPROJECT_PATH'] = './tests/pyproject.toml'
     commandobj.handle()  # execute management command
     with open(settings.__file__, 'r') as fn:
@@ -89,7 +89,7 @@ print('This is locked.)
     with open(urls.__file__, 'w') as fn:
         fn.write(original_urls_string + locked_text)
     commandobj = Command()
-    os.environ['PYPROJECT_PATH'] = './tests/pyproject.toml'
+    # os.environ['PYPROJECT_PATH'] = './tests/pyproject.toml'
     commandobj.handle()  # execute management command
     with open(settings.__file__, 'r') as fn:
         final_settings_string = fn.read()

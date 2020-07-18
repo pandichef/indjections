@@ -1,3 +1,4 @@
+import os
 DEBUG = True
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -43,4 +44,10 @@ DATABASES = {
         'NAME': ':memory:',
         # 'TEST': {"NAME": ':memory:'},
     }
+}
+
+INDJECTIONS_SETTINGS = {
+    'TOML_FILE': './tests/pyproject.toml',
+    'PACKAGES_KEY': "install_requires",
+    'DEV_PACKAGES_KEY': "extras_require.dev",
 }
