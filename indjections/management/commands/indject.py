@@ -10,6 +10,11 @@ from indjections.core import indject_string, parse_toml
 
 def execute_installation_file(package, settings, urls, package_path="indjections.packages",
                               delete_only=False):
+    indjections_settings = getattr(settings, 'INDJECTIONS_SETTINGS', {})
+
+    base_html = indjections_settings.get(
+        'BASE_HTML', join(settings.BASE_DIR, 'templates', 'admin', 'base.html'))
+
     try:
         indjections = import_module(f'{package_path}.{package}')
 
@@ -41,7 +46,7 @@ def execute_installation_file(package, settings, urls, package_path="indjections
 
         # base_top
         try:
-            indject_string(settings.INDJECTIONS_SETTINGS['BASE_HTML'],
+            indject_string(base_html,
                            package + '__base_top', indjections.base_top, after=False,
                            is_template=True, delete_only=delete_only)
         except AttributeError:
@@ -49,7 +54,7 @@ def execute_installation_file(package, settings, urls, package_path="indjections
 
         # base_head
         try:
-            indject_string(settings.INDJECTIONS_SETTINGS['BASE_HTML'],
+            indject_string(base_html,
                            package + '__base_head', indjections.base_head, after=False,
                            reference_regex="</head>", is_template=True,
                            delete_only=delete_only)
@@ -58,7 +63,7 @@ def execute_installation_file(package, settings, urls, package_path="indjections
 
         # base_body
         try:
-            indject_string(settings.INDJECTIONS_SETTINGS['BASE_HTML'],
+            indject_string(base_html,
                            package + '__base_body', indjections.base_body, after=True,
                            reference_regex="<body[\s\S]*?>", is_template=True,
                            delete_only=delete_only)
@@ -68,7 +73,7 @@ def execute_installation_file(package, settings, urls, package_path="indjections
 
         # base_finally i.e., the area just before the </body> tag
         try:
-            indject_string(settings.INDJECTIONS_SETTINGS['BASE_HTML'],
+            indject_string(base_html,
                            package + '__base_finally', indjections.base_finally, after=False,
                            reference_regex="</body>", is_template=True,
                            delete_only=delete_only)
@@ -98,16 +103,27 @@ class Command(BaseCommand):
     help = 'Modifies settings.py and urls.py with boilerplate'
 
     def handle(self, *args, **kwargs):
+        # not "from django.conf import settings" to prevent tests from loading Django
         settings = sys.modules[os.environ['DJANGO_SETTINGS_MODULE']]
+        indjections_settings = getattr(settings, 'INDJECTIONS_SETTINGS', {})
+
         # import_module(settings.ROOT_URLCONF)
         urls = sys.modules[settings.ROOT_URLCONF]
+        # assert False, settings.INDJECTIONS_SETTINGS
 
-        with open(settings.INDJECTIONS_SETTINGS['TOML_FILE'], 'r') as f:
-            install_requires, extras_require = parse_toml(
-                f.read(), settings.INDJECTIONS_SETTINGS['PACKAGES_KEY'],
-                settings.INDJECTIONS_SETTINGS['DEV_PACKAGES_KEY'])
+        toml_file = indjections_settings.get(
+            'TOML_FILE', os.path.join(settings.BASE_DIR, 'Pipfile'))
+        toml_keys = indjections_settings.get('TOML_KEYS', (
+                "packages",
+                "dev-packages",
+                "indjections.extras",
+            ))
 
-        installed_packages = extras_require + install_requires
+        with open(toml_file, 'r') as f:
+            installed_packages = parse_toml(
+                f.read(), toml_keys)
+
+        # installed_packages = extras_require + install_requires
 
         for package in installed_packages:
             execute_installation_file(package, settings, urls)

@@ -1,4 +1,5 @@
 import os
+BASE_DIR = os.path.dirname(__file__)
 DEBUG = True
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -48,7 +49,11 @@ DATABASES = {
 
 INDJECTIONS_SETTINGS = {
     'TOML_FILE': './tests/pyproject.toml',
-    'PACKAGES_KEY': "install_requires",
-    'DEV_PACKAGES_KEY': "extras_require.dev",
+    'TOML_KEYS': [
+        "install_requires",
+        "extras_require.dev",
+        "indjections.extras",
+    ],
+    # 'DEV_PACKAGES_KEY': "extras_require.dev",
     'BASE_HTML': './tests/base.html',  # tmp
 }

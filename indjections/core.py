@@ -79,26 +79,34 @@ def indject_string(file_name, package_name, insert_string, is_template=False,
                 pass  # print(f"{package_name} block not found in {basename(file_name)}.")
 
 
-
-def parse_toml(toml_string: str, package_header='packages',
-               dev_package_header='dev-packages') -> tuple:
-    from toml.decoder import InlineTableDict
+def parse_toml(toml_string: str, toml_keys) -> list:
     tobeinstalled = toml.loads(toml_string)
-    # assert False, issubclass(type(tobeinstalled['dev-packages']['indjections']), InlineTableDict)
-    package_header_keys = package_header.split('.')
-    dev_package_header_keys = dev_package_header.split('.')
-    dct = tobeinstalled
-    for key in package_header_keys:
-        dct = dct[key]
-    # package_list = []
-    # dct = tobeinstalled['install_requires']
-    # install_requires = [x + dct[x] if dct[x] != "*" and not issubclass(type(dct[x]), InlineTableDict) else x for x in dct]
-    install_requires = list(dct)
-    dct = tobeinstalled
-    for key in dev_package_header_keys:
-        dct = dct[key]
-    # dct = tobeinstalled['extras_require']['dev']
-    # extras_require_dev = [x + dct[x] if dct[x] != "*" and not issubclass(type(dct[x]), InlineTableDict) else x for x in dct]
-    extras_require_dev = list(dct)
-    # assert False, extras_require_dev
-    return install_requires, extras_require_dev
+
+    concatenated_packages = []
+    try:
+        for key_string in toml_keys:
+            keys = key_string.split('.')
+
+            # assert False, issubclass(type(tobeinstalled['dev-packages']['indjections']), InlineTableDict)
+            # package_header_keys = package_header.split('.')
+            # dev_package_header_keys = dev_package_header.split('.')
+            dct = tobeinstalled
+            for key in keys:
+                print(key)
+                dct = dct[key]
+            # package_list = []
+            # dct = tobeinstalled['install_requires']
+            # install_requires = [x + dct[x] if dct[x] != "*" and not issubclass(type(dct[x]), InlineTableDict) else x for x in dct]
+            packages = list(dct)
+            # dct = tobeinstalled
+            # for key in dev_package_header_keys:
+            #     dct = dct[key]
+            # dct = tobeinstalled['extras_require']['dev']
+            # extras_require_dev = [x + dct[x] if dct[x] != "*" and not issubclass(type(dct[x]), InlineTableDict) else x for x in dct]
+            # extras_require_dev = list(dct)
+            # assert False, extras_require_dev
+            concatenated_packages += packages
+        # assert False, concatenated_packages
+    except KeyError:
+        pass  # This key wasn't found in the TOML file
+    return concatenated_packages
