@@ -110,9 +110,9 @@ For example, the installation files for `django` might include a `post_hook`
 to copy Django admin template files to the project root directory.
  
 ### What do I need another package?
-This project has a similar goal as [Cookiecutter Django](https://github.com/pydanny/cookiecutter-django).
-I didn't love their approach, so I wrote `indjections` instead.
-[Cookiecutter Django](https://github.com/pydanny/cookiecutter-django) is a top down approach where packages are all bundle together.
+I got tired of installing packages by hand.  This project has a similar goal as [Cookiecutter Django](https://github.com/pydanny/cookiecutter-django).
+I didn't love the cookiecutter approach, so I wrote `indjections` as an alternative.
+[Cookiecutter Django](https://github.com/pydanny/cookiecutter-django) is a top down approach where packages are all bundled together.
 So if you don't like something, you need to spend time removing code (or write your own cookiecutter).
 `indjections` is a bottom up approach i.e., you can do the usual `django-admin startproject {project_name}`
 and then let `python manage.py indject` insert code in the right places.
@@ -121,3 +121,10 @@ and then let `python manage.py indject` insert code in the right places.
 * [django-debug-toolbar](https://django-debug-toolbar.readthedocs.io/en/latest/installation.html)
 * [djangorestframework](https://www.django-rest-framework.org/#installation)
 * [django-hijack](https://django-hijack.readthedocs.io/en/stable/#installation)
+
+#### Contributors Needed for the Following Packages
+* django-filter
+* django-allauth
+* django-cors-headers
+* django-tables2
+* djangoql
