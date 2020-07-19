@@ -81,19 +81,29 @@ INDJECTIONS_SETTINGS = {
 ##### How do I create my own installation file?
 `indjections` looks for a module named `indjections.packages.{packge_name}`.
 This declaratively defines 6 locations in a Django project:
+
 `settings`: The bottom of `settings.py` as defined by the `DJANGO_SETTINGS_MODULE` environment variable.
+
 `urls`: The bottom of `urls.py` as defined by `settings.ROOT_URLCONF`.
+
 `base_top`: The very top of `base.html` e.g., `{% load i18n %}`
+
 `base_head`: The bottom of the `<head>` section in `base.html` e.g., custom CSS.
+
 `base_body`: The top of the `<body>` section in `base.html`.
+
 `base_finally`: The bottom of the `<body>` section in `base.html`.
 
 These 6 section seems to cover the vast majority of Django package installation requirements.
 
 Additionally, `indjections` provides 4 hooks:
+
 `pre_hook`: Functions runs before inserting code
+
 `post_hook`: Functions runs after inserting code
+
 `pre_hook_delete`: Functions runs before deleting code i.e., if package is removed from the TOML file
+
 `post_hook_delete`: Functions runs after deleting code
 
 For example, the installation files for `django` might include a `post_hook`
