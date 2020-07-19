@@ -11,8 +11,23 @@ from indjections.core import indject_string, parse_toml
 def execute_installation_file(package, settings, urls, package_path="indjections.packages",
                               delete_only=False):
     try:
-        # settings
         indjections = import_module(f'{package_path}.{package}')
+
+        # pre (un)install hooks
+        if not delete_only:
+            try:
+                for hook in indjections.pre_hooks:
+                    hook()
+            except AttributeError:
+                print(f"{package} has no pre_hooks.")
+        else:
+            try:
+                for hook in indjections.pre_hooks_delete:
+                    hook()
+            except AttributeError:
+                pass  # print(f"{package} has no pre_hooks_delete.")
+
+        # settings
         try:
             indject_string(settings.__file__, package, indjections.settings, delete_only=delete_only)
         except AttributeError:
@@ -51,13 +66,28 @@ def execute_installation_file(package, settings, urls, package_path="indjections
         except AttributeError:
             print(f"{package} has no base_body.")
 
-        # hooks
+        # base_finally i.e., the area just before the </body> tag
+        try:
+            indject_string(settings.INDJECTIONS_SETTINGS['BASE_HTML'],
+                           package + '__base_finally', indjections.base_finally, after=False,
+                           reference_regex="</body>", is_template=True,
+                           delete_only=delete_only)
+        except AttributeError:
+            print(f"{package} has no base_finally.")
+
+        # post (un)install hooks
         if not delete_only:
             try:
-                for hook in indjections.hooks:
+                for hook in indjections.post_hooks:
                     hook()
             except AttributeError:
-                print(f"{package} has no hooks.")
+                print(f"{package} has no post_hooks.")
+        else:
+            try:
+                for hook in indjections.post_hooks_delete:
+                    hook()
+            except AttributeError:
+                pass  # print(f"{package} has no post_hooks_delete.")
     except ModuleNotFoundError:
         print(f"{package} has no defined indjections.")
     print('################################################################################')

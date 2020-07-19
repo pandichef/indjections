@@ -32,7 +32,7 @@ def indject_string_at(original_string: str, string_to_append: str,
 
 
 def indject_string(file_name, package_name, insert_string, is_template=False,
-                   reference_regex=None, after=True):
+                   reference_regex=None, after=True, delete_only=False):
     if is_template:
         _o = '{'
         _o2 = r'\{'  # { is apparently a special regex character
@@ -47,27 +47,36 @@ def indject_string(file_name, package_name, insert_string, is_template=False,
 
     # if re.search(f"""\n\n{_o2}### block: {package_name}/lock ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}""",
     if re.search(f"""{_o2}### block: {package_name}/lock ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}\n""",
-            original_file_string):
+            original_file_string) and not delete_only:  # note: this means that locked blocks should also be deleted
         print(f"{package_name} block found and locked in {basename(file_name)}. Doing nothing.")
     else:
         # file_string = re.sub(f"""\n\n{_o2}### block: {package_name} ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}""",
         file_string = re.sub(f"""{_o2}### block: {package_name} ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}\n""",
             "", original_file_string)
         found_block_and_deleted = file_string != original_file_string
-        file_string = indject_string_at(
-            file_string,
-            f"""{_o}### block: {package_name} ###{_c}{insert_string}{_o}### endblock: {package_name} ###{_c}\n""",
-            reference_regex, after)
-            
+        if not delete_only:
+            file_string = indject_string_at(
+                file_string,
+                f"""{_o}### block: {package_name} ###{_c}{insert_string}{_o}### endblock: {package_name} ###{_c}\n""",
+                reference_regex, after)
+
         # file_string += f"""
         # {_o}### block: {package_name} ###{_c}{insert_string}{_o}### endblock: {package_name} ###{_c}
         # """  # implicitly adds to the end of the file
+
         with open(file_name, 'w') as f:  # https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files
             f.write(file_string)
-        if found_block_and_deleted:
-            print(f"{package_name} block found and deleted in {basename(file_name)}. Inserting new block.")
+
+        if not delete_only:
+            if found_block_and_deleted:
+                print(f"{package_name} block found and deleted in {basename(file_name)}. Inserting new block.")
+            else:
+                print(f"{package_name} block not found in {basename(file_name)}. Inserting new block.")
         else:
-            print(f"{package_name} block not found in {basename(file_name)}. Inserting new block.")
+            if found_block_and_deleted:
+                print(f"{package_name} block found and deleted in {basename(file_name)}.")
+            else:
+                pass  # print(f"{package_name} block not found in {basename(file_name)}.")
 
 
 
