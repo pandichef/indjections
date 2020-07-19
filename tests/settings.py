@@ -50,5 +50,5 @@ INDJECTIONS_SETTINGS = {
     'TOML_FILE': './tests/pyproject.toml',
     'PACKAGES_KEY': "install_requires",
     'DEV_PACKAGES_KEY': "extras_require.dev",
-    'BASE_HTML': 'base.html',  # tmp
+    'BASE_HTML': './tests/base.html',  # tmp
 }
