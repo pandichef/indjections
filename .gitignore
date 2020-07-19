@@ -149,3 +149,4 @@ yarn-error.log*
 *.njsproj
 *.sln
 *.sw?
+* - Copy*/
