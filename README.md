@@ -45,8 +45,8 @@ INSTALLED_APPS += ['hijack', 'compat']
 ### endblock: django-hijack ####
 ```
 
-Moreover, if you remove this package from [Pipfile](https://github.com/pypa/pipfile) and rerun `python manage.py indject`, 
-then `indjections` will search for `### block: django-hijack ####` and delete this text.
+Moreover, if you remove this package from your project's [Pipfile](https://github.com/pypa/pipfile) and rerun `python manage.py indject`,
+then `indjections` will search for `### block: django-hijack ####`/`### endblock: django-hijack ####` and delete this text.
 
 That's it!
 
