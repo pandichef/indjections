@@ -47,7 +47,9 @@ INSTALLED_APPS += ['hijack', 'compat']
 Moreover, if you remove this package from `Pipfile` and rerun `python manage.py indject`, 
 then `indjections` will search for `### block: django-hijack ####` and delete this text.
 
-That's it!  Oh, on more thing... `indjections` assumes the `base.html` is
+That's it!
+
+Oh, one more thing... `indjections` assumes the `base.html` is
 the Django admin `base.html` and is located at your project root's `templates/admin/base.html`.
 If you want to use another `base.html`, you can add a setting to your project's `settings.py`:
 
