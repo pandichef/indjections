@@ -16,7 +16,7 @@ def execute_installation_file(package, settings, urls, package_path="indjections
         'BASE_HTML', join(settings.BASE_DIR, 'templates', 'admin', 'base.html'))
 
     try:
-        indjections = import_module(f'{package_path}.{package}')
+        indjections = import_module(f'{package_path}.{package}')  # this fails on python 3.5
 
         # pre (un)install hooks
         if not delete_only:
