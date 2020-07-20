@@ -64,11 +64,11 @@ INDJECTIONS_SETTINGS = {
 You have two options:
 1. If you change `### block: django-hijack ####` to `### block: django-hijack/lock ####`,
 then `injections` will not reinsert code if `python manage.py indject` is run again.
-However, if the package if removed from the [TOML](https://github.com/toml-lang/toml) file, then `indjection`
+However, if the package if removed from the [TOML](https://github.com/toml-lang/toml) file, then `indjections`
 will delete the block even if `lock` appears in the block header.
 1. Each package has an installation file located at `indjections/packages`.
 If you create a local version of the file, then that will be used instead
-of the `indjection` default installer.
+of the `indjections` default installer.
 
 ### What if I don't use pipenv?
 The packages can be defined with _any_ [TOML](https://github.com/toml-lang/toml) file.  For example, if you use poetry,
