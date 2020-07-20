@@ -97,7 +97,7 @@ This declaratively defines 6 locations in a Django project:
 
 `base_finally`: The bottom of the `<body>` section in `base.html` e.g., Javascript `<script>` tags
 
-These 6 section seems to cover the vast majority of Django package installation requirements.
+These 6 sections seem to cover the vast majority of Django package installation requirements.
 
 Additionally, `indjections` provides 4 hooks:
 
