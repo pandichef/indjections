@@ -118,7 +118,7 @@ to copy Django admin template files to the project root directory.
 No.  `indjections` is only used during development to help with Django configurations 
 and project setup.
  
-## What do I need another package?
+## Why do I need another package?
 I got tired of installing packages by hand.  This project has a similar goal to [Cookiecutter Django](https://github.com/pydanny/cookiecutter-django).
 I didn't love the cookiecutter approach, so I wrote `indjections` as an alternative.
 [Cookiecutter Django](https://github.com/pydanny/cookiecutter-django) is a top down approach where packages are all bundled together.
