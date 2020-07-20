@@ -2,7 +2,7 @@
 This project enables one-click installation of Django packages by
 injecting code in the _right_ places.
 
-### Installation
+## Installation
 Install using `pip`...
 
     pip install indjections
@@ -18,7 +18,7 @@ Add `'indjections'` to your `INSTALLED_APPS` setting.
         'indjections',
     ]
 
-### Example
+## Example
 By default, `indjections` assumes your TOML file is a `Pipfile` in the
 project root.  For example, say your `Pipfile` has the following packages:
 ```toml
@@ -59,8 +59,8 @@ INDJECTIONS_SETTINGS = {
 }
 ```
 
-### Q&A
-##### What if I want to modify the inserted code?
+## Q&A
+### What if I want to modify the inserted code?
 You have two options:
 1. If you change `### block: django-hijack ####` to `### block: django-hijack/lock ####`,
 then `injections` will not reinsert code if `python manage.py indject` is run again.
@@ -70,7 +70,7 @@ will delete the block even if `lock` appears in the block header.
 If you create a local version of the file, then that will be used instead
 of the `indjection` default installer.
 
-##### What if I don't use pipenv?
+### What if I don't use pipenv?
 The packages can be defined with _any_ TOML file.  For example, if you use poetry,
 then add the following to your project's `settings.py`:
 ```
@@ -80,7 +80,7 @@ INDJECTIONS_SETTINGS = {
 }
 ```
 
-##### How do I create my own installation file?
+### How do I create my own installation file?
 `indjections` looks for a module named `indjections.packages.{packge_name}`.
 This declaratively defines 6 locations in a Django project:
 
@@ -111,7 +111,7 @@ Additionally, `indjections` provides 4 hooks:
 For example, the installation files for `django` might include a `post_hook`
 to copy Django admin template files to the project root directory.
  
-### What do I need another package?
+## What do I need another package?
 I got tired of installing packages by hand.  This project has a similar goal as [Cookiecutter Django](https://github.com/pydanny/cookiecutter-django).
 I didn't love the cookiecutter approach, so I wrote `indjections` as an alternative.
 [Cookiecutter Django](https://github.com/pydanny/cookiecutter-django) is a top down approach where packages are all bundled together.
@@ -119,12 +119,14 @@ So if you don't like something, you need to spend time removing code (or write y
 `indjections` is a bottom up approach i.e., you can do the usual `django-admin startproject {project_name}`
 and then let `python manage.py indject` insert code in the right places.
 
-#### Currently Supported Packages
+## Supported Packages
+
+### Currently Supported
 * [django-debug-toolbar](https://django-debug-toolbar.readthedocs.io/en/latest/installation.html)
 * [djangorestframework](https://www.django-rest-framework.org/#installation)
 * [django-hijack](https://django-hijack.readthedocs.io/en/stable/#installation)
 
-#### Contributors Needed for the Following Packages
+### Seeking Contributors for the Following Packages
 * django-filter
 * django-allauth
 * django-cors-headers
