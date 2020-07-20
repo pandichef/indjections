@@ -127,7 +127,7 @@ So if you don't like something, you need to spend time removing code (or write y
 and then let `python manage.py indject` insert code in the right places.
 
 ## Bonus Example: Configuring [React.js](https://reactjs.org/) with Django
-After parsing the relevant [TOML](https://github.com/toml-lang/toml) file is a [Pipfile](https://github.com/pypa/pipfile) file,
+After parsing the relevant [TOML](https://github.com/toml-lang/toml) file,
 `indjections` looks for the equivalent file name in `indjections.packages.{package_name}`.  If it
 finds the file, the installation procedure begins.
 
@@ -154,6 +154,9 @@ the React app is rebuilt *and* the Django server restarts.
 
 Of course, this might not be the optimal setup for your needs, but a) it works out of the box and b)
  it's a good starting point for customization.
+ 
+By the way, `indjections.extras` is a special name.  By default,
+`indjections` looks for `dev-packages`, `packages`, and `indjections.extras`.
 
 ## Supported Packages
 
