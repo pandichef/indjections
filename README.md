@@ -72,7 +72,7 @@ If you create a local version of the file, then that will be used instead
 of the `indjections` default installer.
 
 ### What if I don't use pipenv?
-The packages can be defined with _any_ [TOML](https://github.com/toml-lang/toml) file.  For example, if you use poetry,
+The packages can be defined with _any_ [TOML](https://github.com/toml-lang/toml) file.  For example, if you use [poetry](https://python-poetry.org/),
 then add the following to your project's `settings.py`:
 ```python
 INDJECTIONS_SETTINGS = {
