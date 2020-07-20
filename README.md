@@ -126,6 +126,35 @@ So if you don't like something, you need to spend time removing code (or write y
 `indjections` is a bottom up approach i.e., you can do the usual `django-admin startproject {project_name}`
 and then let `python manage.py indject` insert code in the right places.
 
+## Bonus Example: Configuring [React.js](https://reactjs.org/) with Django
+After parsing the relevant [TOML](https://github.com/toml-lang/toml) file is a [Pipfile](https://github.com/pypa/pipfile) file,
+`indjections` looks for the equivalent file name in `indjections.packages.{package_name}`.  If it
+finds the file, the installation procedure begins.
+
+But note that the string reference found in the [TOML](https://github.com/toml-lang/toml) file 
+does _not_ actually need to be a Python package.  Take the following example:
+```toml
+[dev-packages]
+django-debug-toolbar = "*"
+
+[packages]
+djangorestframework = "*"
+django-hijack = "*"
+
+[indjections.extras]
+_create-react-app = "*"
+```
+There is no Python package called `_create-react-app`.  However, `indjections` ships
+with a `_create-react-app.py` installation file.  This will automatically execute [create-react-app](https://reactjs.org/docs/create-a-new-react-app.html#create-react-app)
+and add the a reasonable set of configuration for a Django project to serve the [React.js](https://reactjs.org/) app's static files.  More specifically, the installer:
+* Runs `npx create-react-app reactapp` in the project's root directory
+* Sets `STATICFILES_DIRS` and `TEMPLATES` to plug Django into the React app
+* Sets Django's `autoreload` signal to watch for file changes in the React app; when files change,
+the React app is rebuilt *and* the Django server restarts.
+
+Of course, this might not be the optimal setup for your needs, but a) it works out of the box and b)
+ it's a good starting point for customization.
+
 ## Supported Packages
 
 ### Currently Supported
