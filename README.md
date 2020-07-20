@@ -1,5 +1,5 @@
 # Indjections
-This project enables one-click installation of Django packages by
+This project enables one-line installation of Django packages by
 injecting code in the _right_ places.
 
 ## Installation
