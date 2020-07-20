@@ -38,7 +38,7 @@ python manage.py indject
 This will auto-insert code into `settings.py`, `urls.py`, and `base.html`
 as described by the documentation.  For example, for `django-hijack`, the following
 snippet is added to `settings.py` (as described in the [documentation](https://django-hijack.readthedocs.io/en/stable/#installation)):
-```
+```python
 ### block: django-hijack ####
 INSTALLED_APPS += ['hijack', 'compat']
 ### endblock: django-hijack ####
@@ -53,7 +53,7 @@ Oh, one more thing... `indjections` assumes the `base.html` is
 the Django admin `base.html` and is located at your project root's `templates/admin/base.html`.
 If you want to use another `base.html`, you can add a setting to your project's `settings.py`:
 
-```
+```python
 INDJECTIONS_SETTINGS = {
     'BASE_HTML': os.path.join(BASE_DIR, 'templates', 'custom_base.html')
 }
@@ -73,7 +73,7 @@ of the `indjections` default installer.
 ### What if I don't use pipenv?
 The packages can be defined with _any_ [TOML](https://github.com/toml-lang/toml) file.  For example, if you use poetry,
 then add the following to your project's `settings.py`:
-```
+```python
 INDJECTIONS_SETTINGS = {
     'TOML_FILE': os.path.join(BASE_DIR, 'pyproject.toml'),
     'TOML_KEYS': ["tool.poetry.dependencies", "tool.poetry.dev-dependencies"],
