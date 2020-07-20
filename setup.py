@@ -11,7 +11,7 @@ with open(path.join(here, "README.md"), encoding="utf-8") as f:
 
 setup(
     name="indjections",  # Required
-    version="0.0.1",  # Required
+    version="0.0.2",  # Required
     description="Enables one-click installation of Django packages by injecting code in the right places.",  # Optional
     long_description=long_description,  # Optional
     long_description_content_type="text/markdown",  # Optional (see note above)
