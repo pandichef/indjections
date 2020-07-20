@@ -146,7 +146,7 @@ _create-react-app = "*"
 ```
 There is no Python package called `_create-react-app`.  However, `indjections` ships
 with a `_create-react-app.py` installation file.  This will automatically execute [create-react-app](https://reactjs.org/docs/create-a-new-react-app.html#create-react-app)
-and add the a reasonable set of configuration for a Django project to serve the [React.js](https://reactjs.org/) app's static files.  More specifically, the installer:
+and add a reasonable set of configurations for a Django project to serve the [React.js](https://reactjs.org/) app's static files.  More specifically, the installer:
 * Runs `npx create-react-app reactapp` in the project's root directory
 * Sets `STATICFILES_DIRS` and `TEMPLATES` to plug Django into the React app
 * Sets Django's `autoreload` signal to watch for file changes in the React app; when files change,
