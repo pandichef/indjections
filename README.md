@@ -95,7 +95,7 @@ This declaratively defines 6 locations in a Django project:
 
 `base_body`: The top of the `<body>` section in `base.html`.
 
-`base_finally`: The bottom of the `<body>` section in `base.html`.
+`base_finally`: The bottom of the `<body>` section in `base.html` e.g., Javascript `<script>` tags
 
 These 6 section seems to cover the vast majority of Django package installation requirements.
 
