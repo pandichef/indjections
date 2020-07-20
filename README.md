@@ -19,7 +19,7 @@ Add `'indjections'` to your `INSTALLED_APPS` setting.
     ]
 
 ## Example
-By default, `indjections` assumes your TOML file is a `Pipfile` in the
+By default, `indjections` assumes your [TOML](https://github.com/toml-lang/toml) file is a `Pipfile` in the
 project root.  For example, say your `Pipfile` has the following packages:
 ```toml
 [dev-packages]
@@ -64,14 +64,14 @@ INDJECTIONS_SETTINGS = {
 You have two options:
 1. If you change `### block: django-hijack ####` to `### block: django-hijack/lock ####`,
 then `injections` will not reinsert code if `python manage.py indject` is run again.
-However, if the package if removed from the TOML file, then `indjection`
+However, if the package if removed from the [TOML](https://github.com/toml-lang/toml) file, then `indjection`
 will delete the block even if `lock` appears in the block header.
 1. Each package has an installation file located at `indjections/packages`.
 If you create a local version of the file, then that will be used instead
 of the `indjection` default installer.
 
 ### What if I don't use pipenv?
-The packages can be defined with _any_ TOML file.  For example, if you use poetry,
+The packages can be defined with _any_ [TOML](https://github.com/toml-lang/toml) file.  For example, if you use poetry,
 then add the following to your project's `settings.py`:
 ```
 INDJECTIONS_SETTINGS = {
@@ -104,12 +104,16 @@ Additionally, `indjections` provides 4 hooks:
 
 `post_hook`: Functions runs after inserting code
 
-`pre_hook_delete`: Functions runs before deleting code i.e., if package is removed from the TOML file
+`pre_hook_delete`: Functions runs before deleting code i.e., if package is removed from the [TOML](https://github.com/toml-lang/toml) file
 
 `post_hook_delete`: Functions runs after deleting code
 
 For example, the installation files for `django` might include a `post_hook`
 to copy Django admin template files to the project root directory.
+ 
+### Does this package run anything in production?
+No.  `indjections` is only used during development to help with Django configurations 
+and project setup.
  
 ## What do I need another package?
 I got tired of installing packages by hand.  This project has a similar goal as [Cookiecutter Django](https://github.com/pydanny/cookiecutter-django).
