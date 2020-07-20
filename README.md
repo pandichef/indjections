@@ -37,7 +37,7 @@ python manage.py indject
 ```
 
 This will auto-insert code into `settings.py`, `urls.py`, and `base.html`
-as described by the documentation.  For example, for `django-hijack`, the following
+as described by the package's documentation.  For example, for `django-hijack`, the following
 snippet is added to `settings.py` (as described in the [documentation](https://django-hijack.readthedocs.io/en/stable/#installation)):
 ```python
 ### block: django-hijack ####
@@ -50,7 +50,7 @@ then `indjections` will search for `### block: django-hijack ####`/`### endblock
 
 That's it!
 
-Oh, one more thing... `indjections` assumes the `base.html` is
+Oh, one more thing... `indjections` assumes that `base.html` is
 the Django admin `base.html` and is located at your project root's `templates/admin/base.html`.
 If you want to use another `base.html`, you can add a setting to your project's `settings.py`:
 
