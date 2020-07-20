@@ -7,20 +7,21 @@ Install using `pip`...
 
     pip install indjections
 
-or, if using `pipenv`...
+or, if using [pipenv](https://pipenv.pypa.io/en/latest/)...
 
     pipenv install indjections --dev
 
 Add `'indjections'` to your `INSTALLED_APPS` setting.
-
-    INSTALLED_APPS = [
-        ...
-        'indjections',
-    ]
+```python
+INSTALLED_APPS = [
+    ...
+    'indjections',
+]
+```
 
 ## Example
-By default, `indjections` assumes your [TOML](https://github.com/toml-lang/toml) file is a `Pipfile` in the
-project root.  For example, say your `Pipfile` has the following packages:
+By default, `indjections` assumes your [TOML](https://github.com/toml-lang/toml) file is a [Pipfile](https://github.com/pypa/pipfile) in the
+project root.  For example, say your [Pipfile](https://github.com/pypa/pipfile) has the following packages:
 ```toml
 [dev-packages]
 django-debug-toolbar = "*"
@@ -44,7 +45,7 @@ INSTALLED_APPS += ['hijack', 'compat']
 ### endblock: django-hijack ####
 ```
 
-Moreover, if you remove this package from `Pipfile` and rerun `python manage.py indject`, 
+Moreover, if you remove this package from [Pipfile](https://github.com/pypa/pipfile) and rerun `python manage.py indject`, 
 then `indjections` will search for `### block: django-hijack ####` and delete this text.
 
 That's it!
