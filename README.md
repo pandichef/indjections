@@ -111,7 +111,7 @@ if the package is removed from the [TOML](https://github.com/toml-lang/toml) fil
 `post_hook_delete`: Functions run after deleting code (for each package separately); in other words,
 if the package is removed from the [TOML](https://github.com/toml-lang/toml) file
 
-For example, the installation files for `django` might include a `post_hook`
+For example, the installation file for `django` might include a `post_hook`
 to copy Django admin template files to the project root directory.
  
 ### Does this package run anything in production?
