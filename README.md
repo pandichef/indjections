@@ -31,7 +31,7 @@ djangorestframework = "*"
 django-hijack = "*"
 ```
 
-To install these package, you just have to run a Django management command:
+To install these packages, you just have to run a Django management command:
 ```
 python manage.py indject
 ```
@@ -65,11 +65,11 @@ INDJECTIONS_SETTINGS = {
 You have two options:
 1. If you change `### block: django-hijack ####` to `### block: django-hijack/lock ####`,
 then `injections` will not reinsert code if `python manage.py indject` is run again.
-However, if the package if removed from the [TOML](https://github.com/toml-lang/toml) file, then `indjections`
+However, if the package is removed from the [TOML](https://github.com/toml-lang/toml) file, then `indjections`
 will delete the block even if `lock` appears in the block header.
-1. Each package has an installation file located at `indjections/packages`.
-If you create a local version of the file, then that will be used instead
-of the `indjections` default installer.
+1. `indjections` installation files are regular Python modules.  So if you 
+create a custom installer and drop it into `{project_root_directory}/indjections/packages/{package_name}.py`,
+then that's the version that will be used.
 
 ### What if I don't use pipenv?
 The packages can be defined with _any_ [TOML](https://github.com/toml-lang/toml) file.  For example, if you use [poetry](https://python-poetry.org/),
