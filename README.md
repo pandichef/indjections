@@ -101,13 +101,15 @@ These 6 section seems to cover the vast majority of Django package installation 
 
 Additionally, `indjections` provides 4 hooks:
 
-`pre_hook`: Functions runs before inserting code
+`pre_hook`: Functions run before inserting code (for each package separately)
 
-`post_hook`: Functions runs after inserting code
+`post_hook`: Functions run after inserting code (for each package separately)
 
-`pre_hook_delete`: Functions runs before deleting code i.e., if package is removed from the [TOML](https://github.com/toml-lang/toml) file
+`pre_hook_delete`: Functions run before deleting code (for each package separately); in other words,
+if the package is removed from the [TOML](https://github.com/toml-lang/toml) file
 
-`post_hook_delete`: Functions runs after deleting code
+`post_hook_delete`: Functions run after deleting code (for each package separately); in other words,
+if the package is removed from the [TOML](https://github.com/toml-lang/toml) file
 
 For example, the installation files for `django` might include a `post_hook`
 to copy Django admin template files to the project root directory.
