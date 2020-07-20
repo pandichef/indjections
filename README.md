@@ -171,3 +171,4 @@ By the way, `indjections.extras` is a special name.  By default,
 * django-cors-headers
 * django-tables2
 * djangoql
+* django-material-admin
