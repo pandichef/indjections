@@ -45,7 +45,11 @@ post_hooks = [
 
 def delete_react_app_folder():
     print('Attempting to delete ./reactapp...')
-    subprocess.run("rm -ri ./reactapp", shell=True, capture_output=True)  # capture_out was added in python 3.7
+    try:
+        subprocess.run("rm -ri ./reactapp", shell=True, capture_output=True)  # capture_out was added in python 3.7
+    except TypeError:  # to support python 3.6
+        subprocess.run("rm -ri ./reactapp", shell=True)  # capture_out was added in python 3.7
+
 
 post_hooks_delete = [
     delete_react_app_folder,
