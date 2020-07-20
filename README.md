@@ -81,7 +81,7 @@ INDJECTIONS_SETTINGS = {
 ```
 
 ### How do I create my own installation file?
-`indjections` looks for a module named `indjections.packages.{packge_name}`.
+`indjections` looks for a module named `indjections.packages.{package_name}`.
 This declaratively defines 6 locations in a Django project:
 
 `settings`: The bottom of `settings.py` as defined by the `DJANGO_SETTINGS_MODULE` environment variable.
