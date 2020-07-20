@@ -48,7 +48,7 @@ setup(
             'pytest',
             # 'pytest-mock',
             # 'ipython',
-            # 'pytest-cov',
+            'pytest-cov',
             'pytest-django',
         ]
     },  # Optional
