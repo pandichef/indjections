@@ -9,6 +9,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'indjections',
+    'tests.main',
 ]
 SECRET_KEY = 'not very secret in tests'
 MIDDLEWARE = [
