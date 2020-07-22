@@ -135,12 +135,12 @@ This produces the following text in `settings.py`...
 ```python
 ### block: <package name> ####
 # project level code
-# print("app1")
-# print("app1:Model1")
-# print("app1:Model2")
-# print("app2")
-# print("app2:Model3")
-# print("app2:Model4")
+print("app1")
+print("app1:Model1")
+print("app1:Model2")
+print("app2")
+print("app2:Model3")
+print("app2:Model4")
 ### endblock: <package name> ####
 ```
 
