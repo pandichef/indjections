@@ -121,7 +121,8 @@ The 6 locations also support insertions of app and model level code.  These are
 specified as a tuple, where the first parameter is at the project level, the second
 at the app level, and the third at the model level.  For example, say our project
 has two apps. `app1` consists of models `Model1` and `Model2` and `app2` consists
-of models `Model3` and `Model4`.
+of models `Model3` and `Model4`.  Moreover, we have an installer called 
+`_simple_print` with the following content...
 
 ```python
 settings = (
@@ -133,7 +134,7 @@ settings = (
 
 This produces the following text in `settings.py`...
 ```python
-### block: <package name> ####
+### block: _simple_print ####
 # project level code
 print("app1")
 print("app1:Model1")
@@ -141,14 +142,14 @@ print("app1:Model2")
 print("app2")
 print("app2:Model3")
 print("app2:Model4")
-### endblock: <package name> ####
+### endblock: _simple_print ####
 ```
 
-Finally, installation files can have variables of the form `app_.*`, which will
-insert code into app files of the form `app_.*.py`.  Here, the first element of 
-the tuple variable is at the **app** level and the second element is at the 
-**model level**.  For example, say the installer for `djangorestframework` has the
-following content...
+Finally, installation files can have variables of the form `app_.*` (`.*` is regex), 
+which will insert code into app files of the form `app_.*.py`.  Here, the first 
+element of the tuple variable is at the **app** level and the second element is 
+at the **model level**.  For example, say the installer for `djangorestframework` 
+has the following content...
 
 ```python
 app_serializers = ("""
