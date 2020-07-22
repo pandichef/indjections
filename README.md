@@ -178,7 +178,7 @@ class Model2Serializer(serializers.HyperlinkedModelSerializer):
 ### endblock: djangorestframework ####
 ```
 
-and the corresponding insertion in `app2/serializer.py`.
+and the corresponding insertion in `app2/serializers.py`.
 
 By default, all apps and models in the _project_ are including.  (Obviously, 
 this won't impact third party packages in any way.)  To include/exclude a subset, 
