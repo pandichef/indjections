@@ -195,6 +195,13 @@ which, in the above example, is equivalent to...
 exclude = ['app2__model2']
 ```
  
+Finally, to see the full list of app and model inspection variables, run 
+the following in the console...
+```python
+from indjections.core import get_app_and_model_data
+print(get_app_and_model_data())
+```
+ 
 ### Does this package run anything in production?
 No.  `indjections` is only used during development to help with Django configurations 
 and project setup.
