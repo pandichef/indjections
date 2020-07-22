@@ -146,18 +146,29 @@ def execute_installation_file(package, settings, urls, package_path=package_path
             print(f"{package} has no base_finally.")
 
         # app_*
-        # UNDER CONSTRUCTION... seems to work
+        # Note: filter is implicitly similar to try/except block elsewhere
         app_level_files = list(filter(lambda x: x.startswith('app_'),
-                                      dir(indjections)))  # list of strings; implicitly similar to try/except block elsewhere
+                                      dir(indjections)))  # list of strings
         for file_name in app_level_files:
             for app in project_app_list:
                 tuples_to_insert = getattr(indjections, file_name)
-                # models = app['models']
+                exclude = indjections_settings.get('EXCLUDE_APPS', {})
+                include = indjections_settings.get('INCLUDE_APPS', {})
+                if include and exclude:
+                    raise Exception(f'In INDJECTIONS_SETTINGS, specify only "EXCLUDE_APPS" or "INCLUDE_APPS", but not both.')
+                exclude.update({'empty_dict_is_not_False': []})  # hack: make sure {} isn't interpreted as False
+                include.update({'empty_dict_is_not_False': []})  # hack: make sure {} isn't interpreted as False
+                if include:
+                    include_this_app = app['label'] in include and package in include[app['label']]
+                elif exclude:
+                    include_this_app = app['label'] not in exclude and package not in exclude[app['label']]
+                else:  # default: include all apps
+                    include_this_app = True
                 insertion_string = make_insertion_string(tuples_to_insert, app)
                 file_path = join(app['path'], f'{file_name.replace("app_", "")}.py')
                 Path(file_path).touch()  # make sure file exists
                 indject_string(file_path, package, insertion_string,
-                               delete_only=delete_only)
+                               delete_only=not include_this_app)  # delete if excluded!
 
         # post (un)install hooks
         if not delete_only:

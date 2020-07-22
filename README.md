@@ -48,17 +48,38 @@ INSTALLED_APPS += ['hijack', 'compat']
 Moreover, if you remove this package from your project's [Pipfile](https://github.com/pypa/pipfile) and rerun `python manage.py indject`,
 then `indjections` will search for `### block: django-hijack ####`/`### endblock: django-hijack ####` and delete this text.
 
-That's it!
-
-Oh, one more thing... `indjections` assumes that `base.html` is
+Note that `indjections` assumes that `base.html` is
 the Django admin `base.html` and is located at your project root's `templates/admin/base.html`.
 If you want to use another `base.html`, you can add a setting to your project's `settings.py`:
-
 ```python
 INDJECTIONS_SETTINGS = {
     'BASE_HTML': os.path.join(BASE_DIR, 'templates', 'custom_base.html')
 }
 ```
+
+By default, all apps and models in the _project_ are included.  (Obviously, 
+this won't impact third party packages in any way.)  To include/exclude a subset, 
+use the following syntax in the installation file...
+
+If you want to use certain apps/packages, you can add a setting to your project's `settings.py`...
+```python
+INDJECTIONS_SETTINGS = {
+    'INCLUDE_APPS': {
+        'main': ['djangorestframework']  # any list of installation files
+    },
+}
+```
+
+or...
+```python
+INDJECTIONS_SETTINGS = {
+    'EXCLUDE_APPS': {
+        'main': ['djangorestframework']  # any list of installation files
+    },
+}
+```
+
+If both `INCLUDE_APPS` and `EXCLUDE_APPS` specified, an exception will be raised.
 
 ## Q&A
 ### What if I want to modify the inserted code?
@@ -203,22 +224,7 @@ class Model2Serializer(serializers.HyperlinkedModelSerializer):
 ### endblock: djangorestframework ####
 ```
 
-and the corresponding insertion in `app2/serializers.py`.
-
-[THE FOLLOWING FEATURES ARE UNDER CONSTRUCTION]  
-By default, all apps and models in the _project_ are included.  (Obviously, 
-this won't impact third party packages in any way.)  To include/exclude a subset, 
-use the following syntax in the installation file...
-
-```python
-include = ['app1', 'app2__model1']
-```
-
-which, in the above example, is equivalent to...
-
-```python
-exclude = ['app2__model2']
-```
+and the equivalent insertion in `app2/serializers.py`.
  
 Finally, to see the full list of app and model inspection variables, run 
 the following in the console...
