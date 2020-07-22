@@ -139,7 +139,6 @@ if the package is removed from the [TOML](https://github.com/toml-lang/toml) fil
 For example, the installation file for `django` might include a `post_hook`
 to copy Django admin template files to the project root directory.
 
-[THE FOLLOWING FEATURES ARE UNDER CONSTRUCTION]  
 The 6 locations also support insertions of app and model level code.  These are 
 specified as a tuple, where the first parameter is at the project level, the second
 at the app level, and the third at the model level.  For example, say our project
@@ -206,6 +205,7 @@ class Model2Serializer(serializers.HyperlinkedModelSerializer):
 
 and the corresponding insertion in `app2/serializers.py`.
 
+[THE FOLLOWING FEATURES ARE UNDER CONSTRUCTION]  
 By default, all apps and models in the _project_ are included.  (Obviously, 
 this won't impact third party packages in any way.)  To include/exclude a subset, 
 use the following syntax in the installation file...
