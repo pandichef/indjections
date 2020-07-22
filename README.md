@@ -3,11 +3,11 @@ This project enables one-line installation of Django packages by
 injecting code in the _right_ places.
 
 ## Installation
-Install using `pip`...
+Install using `pip`:
 
     pip install indjections
 
-or, if using [pipenv](https://pipenv.pypa.io/en/latest/)...
+or, if using [pipenv](https://pipenv.pypa.io/en/latest/):
 
     pipenv install indjections --dev
 
@@ -59,9 +59,9 @@ INDJECTIONS_SETTINGS = {
 
 By default, all apps and models in the _project_ are included.  (Obviously, 
 this won't impact third party packages in any way.)  To include/exclude a subset, 
-use the following syntax in the installation file...
+use the following syntax in the installation file:
 
-If you want to use certain apps/packages, you can add a setting to your project's `settings.py`...
+If you want to use certain apps/packages, you can add a setting to your project's `settings.py`:
 ```python
 INDJECTIONS_SETTINGS = {
     'INCLUDE_APPS': {
@@ -70,7 +70,7 @@ INDJECTIONS_SETTINGS = {
 }
 ```
 
-or...
+or
 ```python
 INDJECTIONS_SETTINGS = {
     'EXCLUDE_APPS': {
@@ -93,12 +93,12 @@ create a custom installer and drop it into `{project_root_directory}/indjections
 then that's the version that will be used.
 1. `indjections` also includes a convenience utility to monkey patch variables in 
 installion files.  For example, say the default installer for 
-`djangorestframework` has this definition...
+`djangorestframework` has this definition:
 ```python
 TYPE_OF_SERIALIZER = "ModelSerializer"
 ```
 To change this to `HyperlinkedModelSerializer`, you can include the following in
-your project's `settings.py`...
+your project's `settings.py`:
 ```python
 from indjections import get_installer
 get_installer('djangorestframework').TYPE_OF_SERIALIZER  = 'HyperlinkedModelSerializer'
@@ -165,7 +165,7 @@ specified as a tuple, where the first parameter is at the project level, the sec
 at the app level, and the third at the model level.  For example, say our project
 has two apps. `app1` consists of models `Model1` and `Model2` and `app2` consists
 of models `Model3` and `Model4`.  Moreover, we have an installer called 
-`_simple_print` with the following content...
+`_simple_print` with the following content:
 
 ```python
 settings = (
@@ -175,7 +175,7 @@ settings = (
 )
 ```
 
-This produces the following text in `settings.py`...
+This produces the following text in `settings.py`:
 ```python
 ### block: _simple_print ####
 # project level code
@@ -194,7 +194,7 @@ Finally, installation files can have variables of the form `app_*`,
 which will insert code into app files of the form `app_*.py`.  Here, the first 
 element of the tuple variable is at the **app** level and the second element is 
 at the **model level**.  For example, say the installer for `djangorestframework` 
-has the following content...
+has the following content:
 
 ```python
 app_serializers = ("""
@@ -207,7 +207,7 @@ class {object_name}Serializer(serializers.HyperlinkedModelSerializer):
 """)
 ```
 
-This will produce the following in `app1/serializers.py`...
+This will produce the following in `app1/serializers.py`:
 ```python
 ### block: djangorestframework ####
 from rest_framework import serializers
@@ -227,7 +227,7 @@ class Model2Serializer(serializers.HyperlinkedModelSerializer):
 and the equivalent insertion in `app2/serializers.py`.
  
 Finally, to see the full list of app and model inspection variables, run 
-the following in the console...
+the following in the console:
 ```python
 from indjections.core import get_app_and_model_data
 print(get_app_and_model_data())
