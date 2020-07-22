@@ -150,7 +150,7 @@ def get_app_and_model_data():
     list_of_app_dicts = []
     for app in list(apps.get_app_configs()):
         if app.path.startswith(settings.BASE_DIR):  # local apps only
-            app_dict = {'path': app.path}
+            app_dict = {'path': app.path}  # this is the full path on the filesystem
             app_dict.update({'label': app.label})  # e.g., auth
             app_dict.update({'module': app.name})  # e.g., django.contrib.auth
             app_dict.update({'verbose_name': app.verbose_name})
