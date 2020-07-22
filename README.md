@@ -88,9 +88,15 @@ You have two options:
 then `injections` will not reinsert code if `python manage.py indject` is run again.
 However, if the package is removed from the [TOML](https://github.com/toml-lang/toml) file, then `indjections`
 will delete the block even if `lock` appears in the block header.
-1. `indjections` installation files are regular Python modules.  So if you 
-create a custom installer and drop it into `{project_root_directory}/indjections/packages/{package_name}.py`,
-then that's the version that will be used.
+1. `indjections` installation files are regular Python modules.  If you create a
+custom installation file, `indjections` will look for custom installers in the
+`custom_installers` directory of your project's root directory.  For example, if
+you want to create a custom installer for `djangorestframework`, you just add a
+file called `{project_root_directory}/custom_installers/djangorestframework.py`.
+Then this version will be used and the default `indjections` version will be
+ignored.
+
+<!---
 1. `indjections` also includes a convenience utility to monkey patch variables in 
 installion files.  For example, say the default installer for 
 `djangorestframework` has this definition:
@@ -103,6 +109,7 @@ your project's `settings.py`:
 from indjections import get_installer
 get_installer('djangorestframework').TYPE_OF_SERIALIZER  = 'HyperlinkedModelSerializer'
 ```
+-->
 
 ### What if I don't use pipenv?
 The packages can be defined with _any_ [TOML](https://github.com/toml-lang/toml) file.  For example, if you use [poetry](https://python-poetry.org/),

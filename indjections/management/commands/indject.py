@@ -152,15 +152,13 @@ def execute_installation_file(package, settings, urls, package_path=package_path
         for file_name in app_level_files:
             for app in project_app_list:
                 tuples_to_insert = getattr(indjections, file_name)
-                exclude = indjections_settings.get('EXCLUDE_APPS', {})
-                include = indjections_settings.get('INCLUDE_APPS', {})
+                include = indjections_settings.get('INCLUDE_APPS', None)
+                exclude = indjections_settings.get('EXCLUDE_APPS', None)
                 if include and exclude:
                     raise Exception(f'In INDJECTIONS_SETTINGS, specify only "EXCLUDE_APPS" or "INCLUDE_APPS", but not both.')
-                exclude.update({'empty_dict_is_not_False': []})  # hack: make sure {} isn't interpreted as False
-                include.update({'empty_dict_is_not_False': []})  # hack: make sure {} isn't interpreted as False
-                if include:
+                if include or include == {}:
                     include_this_app = app['label'] in include and package in include[app['label']]
-                elif exclude:
+                elif exclude or exclude == {}:
                     include_this_app = app['label'] not in exclude and package not in exclude[app['label']]
                 else:  # default: include all apps
                     include_this_app = True
@@ -188,11 +186,29 @@ def execute_installation_file(package, settings, urls, package_path=package_path
     print('################################################################################')
 
 
+def use_custom_installers(directory_name='custom_installers'):
+    from indjections import package_path
+    try:
+        files = os.listdir(directory_name)
+        files.remove('__init__.py')
+        for file in files:
+            module_name = os.path.splitext(file)[0]
+            exec(f'from {directory_name} import {module_name}')  # local version
+            try:
+                exec(f'import {package_path}.{module_name}')  # global version
+            except ModuleNotFoundError:
+                pass
+            exec(f"""sys.modules[f'{package_path}.{module_name}'] = {module_name}""")
+    except FileNotFoundError:
+        pass  # no custom installers found
+
 
 class Command(BaseCommand):
     help = 'Modifies settings.py and urls.py with boilerplate'
 
     def handle(self, *args, **kwargs):
+        use_custom_installers()
+
         # not "from django.conf import settings" to prevent tests from loading Django
         settings = sys.modules[os.environ['DJANGO_SETTINGS_MODULE']]
         indjections_settings = getattr(settings, 'INDJECTIONS_SETTINGS', {})

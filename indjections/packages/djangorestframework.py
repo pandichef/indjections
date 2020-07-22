@@ -1,3 +1,7 @@
+from string import Template
+
+TYPE_OF_SERIALIZER = "HyperlinkedModelSerializer"
+
 settings = ("""
 INSTALLED_APPS += ['rest_framework']
 REST_FRAMEWORK = {
@@ -21,11 +25,11 @@ urlpatterns += [path('api-auth/', include('rest_framework.urls'))]
 
 app_serializers = ("""
 from rest_framework import serializers
-""", """
+""", Template("""
 from .models import {object_name}
 
-class {object_name}Serializer(serializers.HyperlinkedModelSerializer):
+class {object_name}Serializer(serializers.${serializer_class}):
     class Meta:
         model = {object_name}
         fields = {field_names}
-""")
+""").substitute(serializer_class=TYPE_OF_SERIALIZER))
