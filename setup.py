@@ -46,7 +46,7 @@ setup(
             # 'django-debug-toolbar',
             'pytest',
             # 'pytest-mock',
-            # 'ipython',
+            'ipython',
             'pytest-cov',
             'pytest-django',
         ]
