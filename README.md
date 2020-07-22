@@ -95,7 +95,6 @@ INDJECTIONS_SETTINGS = {
 
 ### How do I create my own installation file?
 
-#### Basic Implementation
 `indjections` looks for a module named `indjections.packages.{package_name}`.
 This declaratively defines 6 locations in a Django project:
 
@@ -128,7 +127,7 @@ if the package is removed from the [TOML](https://github.com/toml-lang/toml) fil
 For example, the installation file for `django` might include a `post_hook`
 to copy Django admin template files to the project root directory.
 
-#### Advanced Implementation (THESE FEATURES ARE UNDER CONSTRUCTION)
+[THE FOLLOWING FEATURES ARE UNDER CONSTRUCTION]
 The 6 locations also support insertions of app and model level code.  These are 
 specified as a tuple, where the first parameter is at the project level, the second
 at the app level, and the third at the model level.  For example, say our project
