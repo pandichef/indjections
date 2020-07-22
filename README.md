@@ -157,6 +157,8 @@ print("app2:Model4")
 ### endblock: _simple_print ####
 ```
 
+Note that `settings = "print('hello')"` is equivalent to `settings = ("print('hello')",)`.
+
 Finally, installation files can have variables of the form `app_.*` (`.*` is regex), 
 which will insert code into app files of the form `app_.*.py`.  Here, the first 
 element of the tuple variable is at the **app** level and the second element is 
