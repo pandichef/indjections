@@ -93,6 +93,18 @@ INDJECTIONS_SETTINGS = {
 }
 ```
 
+### Does this package run anything in production?
+No.  `indjections` is only used during development to help with Django configurations 
+and project setup.
+ 
+### Why do I need another package?
+I got tired of installing packages by hand.  This project has a similar goal to [Cookiecutter Django](https://github.com/pydanny/cookiecutter-django).
+I didn't love the cookiecutter approach, so I wrote `indjections` as an alternative.
+[Cookiecutter Django](https://github.com/pydanny/cookiecutter-django) is a top down approach where packages are all bundled together.
+So if you don't like something, you need to spend time removing code (or writing your own cookiecutter).
+`indjections` is a bottom up approach i.e., you can do the usual `django-admin startproject {project_name}`
+and then let `python manage.py indject` insert code in the right places.
+
 ### How do I create my own installation file?
 
 `indjections` looks for a module named `indjections.packages.{package_name}`.
@@ -214,18 +226,6 @@ the following in the console...
 from indjections.core import get_app_and_model_data
 print(get_app_and_model_data())
 ```
- 
-### Does this package run anything in production?
-No.  `indjections` is only used during development to help with Django configurations 
-and project setup.
- 
-## Why do I need another package?
-I got tired of installing packages by hand.  This project has a similar goal to [Cookiecutter Django](https://github.com/pydanny/cookiecutter-django).
-I didn't love the cookiecutter approach, so I wrote `indjections` as an alternative.
-[Cookiecutter Django](https://github.com/pydanny/cookiecutter-django) is a top down approach where packages are all bundled together.
-So if you don't like something, you need to spend time removing code (or writing your own cookiecutter).
-`indjections` is a bottom up approach i.e., you can do the usual `django-admin startproject {project_name}`
-and then let `python manage.py indject` insert code in the right places.
 
 ## Bonus Example: Configuring [React.js](https://reactjs.org/) with Django
 After parsing the relevant [TOML](https://github.com/toml-lang/toml) file,
