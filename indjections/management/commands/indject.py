@@ -6,9 +6,10 @@ from importlib import import_module
 import sys
 from django.core.management.base import BaseCommand
 from indjections.core import indject_string, parse_toml
+from indjections import package_path
 
 
-def execute_installation_file(package, settings, urls, package_path="indjections.packages",
+def execute_installation_file(package, settings, urls, package_path=package_path,
                               delete_only=False):
     indjections_settings = getattr(settings, 'INDJECTIONS_SETTINGS', {})
 

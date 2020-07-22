@@ -70,8 +70,8 @@ will delete the block even if `lock` appears in the block header.
 1. `indjections` installation files are regular Python modules.  So if you 
 create a custom installer and drop it into `{project_root_directory}/indjections/packages/{package_name}.py`,
 then that's the version that will be used.
-1. `indjections` also includes a convenience utility (NOT IMPLEMETED YET) to monkey 
-patch variables in installion files.  For example, say the default installer for 
+1. `indjections` also includes a convenience utility to monkey patch variables in 
+installion files.  For example, say the default installer for 
 `djangorestframework` has this definition...
 ```python
 TYPE_OF_SERIALIZER = "ModelSerializer"
