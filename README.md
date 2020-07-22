@@ -119,15 +119,80 @@ to copy Django admin template files to the project root directory.
 #### Advanced Implementation (THESE FEATURES ARE UNDER CONSTRUCTION)
 The 6 locations also support insertions of app and model level code.  These are 
 specified as a tuple, where the first parameter is at the project level, the second
-at the app level, and the third at the model level.  For example,
+at the app level, and the third at the model level.  For example, say our project
+has two apps. `app1` consists of models `Model1` and `Model2` and `app2` consists
+of models `Model3` and `Model4`.
 
 ```python
-
 settings = (
-    '#'
+    '\n# project level code',
+    '\nprint("{label}")',  # "label" is a Django name at the app level
+    '\nprint("{app_label}:{object_name}")',  # "app_label" and "object_name" are at the model level
 )
 ```
 
+This produces the following text in `settings.py`...
+```python
+### block: <package name> ####
+# project level code
+# print("app1")
+# print("app1:Model1")
+# print("app1:Model2")
+# print("app2")
+# print("app2:Model3")
+# print("app2:Model4")
+### endblock: <package name> ####
+```
+
+Finally, installation files can have variables of the form `app_.*`, which will
+insert code into app files of the form `app_.*.py`.  Here, the first element of 
+the tuple variable is at the **app** level and the second element is at the 
+**model level**.  For example, say the installer for `djangorestframework` has the
+following content...
+
+```python
+app_serializers = ("""
+from rest_framework import serializers
+""","""
+class {object_name}Serializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = {object_name}
+        fields = {field_names}
+""")
+```
+
+This will produce the following in `app1/serializers.py`...
+```python
+### block: <package name> ####
+from rest_framework import serializers
+
+class Model1Serializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Model1
+        fields = ['field1', 'field2', 'field3']
+
+class Model2Serializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Model2
+        fields = ['field1', 'field2', 'field3']
+### endblock: <package name> ####
+```
+
+and the corresponding insertion in `app2/serializer.py`.
+
+By default, all apps and models in the _project_ are including.  (Obviously, 
+this won't impact third party packages in any way.)  To include/exclude a subset, 
+use the following syntax in the installation file...
+
+```python
+include = ['app1', 'app2__model1']
+```
+
+which, in the above example, is equivalent to...
+
+```python
+exclude = ['app2__model2']
+```
  
 ### Does this package run anything in production?
 No.  `indjections` is only used during development to help with Django configurations 
