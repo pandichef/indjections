@@ -58,10 +58,8 @@ INDJECTIONS_SETTINGS = {
 ```
 
 By default, all apps and models in the _project_ are included.  (Obviously, 
-this won't impact third party packages in any way.)  To include/exclude a subset, 
-use the following syntax in the installation file:
-
-If you want to use certain apps/packages, you can add a setting to your project's `settings.py`:
+this won't impact third party packages in any way.)  To include/exclude a subset,
+you can add a setting to your project's `settings.py`:
 ```python
 INDJECTIONS_SETTINGS = {
     'INCLUDE_APPS': {
@@ -79,7 +77,7 @@ INDJECTIONS_SETTINGS = {
 }
 ```
 
-If both `INCLUDE_APPS` and `EXCLUDE_APPS` specified, an exception will be raised.
+If both `INCLUDE_APPS` and `EXCLUDE_APPS` are specified, an exception will be raised.
 
 ## Q&A
 ### What if I want to modify the inserted code?
