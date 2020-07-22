@@ -1,3 +1,5 @@
+from pprint import pformat
+from pathlib import Path
 import re
 import os
 from os import listdir
@@ -7,6 +9,62 @@ import sys
 from django.core.management.base import BaseCommand
 from indjections.core import indject_string, parse_toml
 from indjections import package_path
+from indjections.core import get_app_and_model_data
+
+project_app_list = get_app_and_model_data()
+
+
+def make_insertion_string(tuples_to_insert, app, app_level=True):
+    """app_level=True when working on app_* variables
+    >>> make_insertion_string(('{label}:', '{object_name}:'),
+    ...    {'label': 'main', 'models': [
+    ...        {'object_name': "Model1"}, {'object_name': "Model2"}
+    ...    ]})
+    'main:Model1:Model2:'
+    >>> make_insertion_string((':', '{label}:', '{object_name}:'),
+    ...    {'label': 'main', 'models': [
+    ...        {'object_name': "Model1"}, {'object_name': "Model2"}
+    ...    ]}, app_level=False)
+    ':main:Model1:Model2:'
+    >>> make_insertion_string(('{label}:',),
+    ...    {'label': 'main', 'models': [
+    ...        {'object_name': "Model1"}, {'object_name': "Model2"}
+    ...    ]})
+    'main:'
+    """
+    if type(tuples_to_insert) == str:
+        tuples_to_insert = (tuples_to_insert,)
+    if app_level:
+        tuples_to_insert = ('',) + tuples_to_insert
+    models = app['models']
+    # if app_level:
+    insertion_string = tuples_to_insert[0]
+    try:
+        insertion_string += tuples_to_insert[1].format(**app)
+    except IndexError:
+        pass
+    # else:
+    #     insertion_string = tuples_to_insert[0].format(**app)
+
+    model_string = ""
+    for model in models:
+        # if app_level:
+        try:
+            model_string += tuples_to_insert[2].format(**model)
+        except IndexError:
+            pass
+        # else:
+        #     model_string += tuples_to_insert[1].format(**model)
+    insertion_string += model_string
+    return insertion_string
+
+def make_insertion_string_multi_app(tuples_to_insert, apps=project_app_list):
+    if type(tuples_to_insert) == str:
+        tuples_to_insert = (tuples_to_insert,)
+    insertion_string = tuples_to_insert[0]
+    for app in apps:
+        insertion_string += make_insertion_string(tuples_to_insert[1:], app)
+    return insertion_string
 
 
 def execute_installation_file(package, settings, urls, package_path=package_path,
@@ -35,28 +93,32 @@ def execute_installation_file(package, settings, urls, package_path=package_path
 
         # settings
         try:
-            indject_string(settings.__file__, package, indjections.settings, delete_only=delete_only)
+            insertion_string = make_insertion_string_multi_app(tuples_to_insert=indjections.settings)
+            indject_string(settings.__file__, package, insertion_string, delete_only=delete_only)
         except AttributeError:
             print(f"{package} has no settings indjection.")
 
         # urls
         try:
-            indject_string(urls.__file__, package, indjections.urls, delete_only=delete_only)
+            insertion_string = make_insertion_string_multi_app(tuples_to_insert=indjections.urls)
+            indject_string(urls.__file__, package, insertion_string, delete_only=delete_only)
         except AttributeError:
             print(f"{package} has no urls indjection.")
 
         # base_top
         try:
+            insertion_string = make_insertion_string_multi_app(tuples_to_insert=indjections.base_top)
             indject_string(base_html,
-                           package + '__base_top', indjections.base_top, after=False,
+                           package + '__base_top', insertion_string, after=False,
                            is_template=True, delete_only=delete_only)
         except AttributeError:
             print(f"{package} has no base_top.")
 
         # base_head
         try:
+            insertion_string = make_insertion_string_multi_app(tuples_to_insert=indjections.base_head)
             indject_string(base_html,
-                           package + '__base_head', indjections.base_head, after=False,
+                           package + '__base_head', insertion_string, after=False,
                            reference_regex="</head>", is_template=True,
                            delete_only=delete_only)
         except AttributeError:
@@ -64,8 +126,9 @@ def execute_installation_file(package, settings, urls, package_path=package_path
 
         # base_body
         try:
+            insertion_string = make_insertion_string_multi_app(tuples_to_insert=indjections.base_body)
             indject_string(base_html,
-                           package + '__base_body', indjections.base_body, after=True,
+                           package + '__base_body', insertion_string, after=True,
                            reference_regex="<body[\s\S]*?>", is_template=True,
                            delete_only=delete_only)
             # regex: https://stackoverflow.com/questions/6441015/symbol-for-any-number-of-any-characters-in-regex
@@ -74,12 +137,27 @@ def execute_installation_file(package, settings, urls, package_path=package_path
 
         # base_finally i.e., the area just before the </body> tag
         try:
+            insertion_string = make_insertion_string_multi_app(tuples_to_insert=indjections.base_finally)
             indject_string(base_html,
-                           package + '__base_finally', indjections.base_finally, after=False,
+                           package + '__base_finally', insertion_string, after=False,
                            reference_regex="</body>", is_template=True,
                            delete_only=delete_only)
         except AttributeError:
             print(f"{package} has no base_finally.")
+
+        # app_*
+        # UNDER CONSTRUCTION... seems to work
+        app_level_files = list(filter(lambda x: x.startswith('app_'),
+                                      dir(indjections)))  # list of strings; implicitly similar to try/except block elsewhere
+        for file_name in app_level_files:
+            for app in project_app_list:
+                tuples_to_insert = getattr(indjections, file_name)
+                # models = app['models']
+                insertion_string = make_insertion_string(tuples_to_insert, app)
+                file_path = join(app['path'], f'{file_name.replace("app_", "")}.py')
+                Path(file_path).touch()  # make sure file exists
+                indject_string(file_path, package, insertion_string,
+                               delete_only=delete_only)
 
         # post (un)install hooks
         if not delete_only:
