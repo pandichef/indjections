@@ -76,7 +76,7 @@ installion files.  For example, say the default installer for
 ```python
 TYPE_OF_SERIALIZER = "ModelSerializer"
 ```
-To change this to `HyperlinkedModelSerializer`, can you include the following in
+To change this to `HyperlinkedModelSerializer`, you can include the following in
 your project's `settings.py`...
 ```python
 from indjections import get_installer
