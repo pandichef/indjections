@@ -70,6 +70,18 @@ will delete the block even if `lock` appears in the block header.
 1. `indjections` installation files are regular Python modules.  So if you 
 create a custom installer and drop it into `{project_root_directory}/indjections/packages/{package_name}.py`,
 then that's the version that will be used.
+1. `indjections` also includes a convenience utility (NOT IMPLEMETED YET) to monkey 
+patch variables in installion files.  For example, say the default installer for 
+`djangorestframework` has this definition...
+```python
+TYPE_OF_SERIALIZER = "ModelSerializer"
+```
+To change this to `HyperlinkedModelSerializer`, can you include the following in
+your project's `settings.py`...
+```python
+from indjections import get_installer
+get_installer('djangorestframework').TYPE_OF_SERIALIZER  = 'HyperlinkedModelSerializer'
+```
 
 ### What if I don't use pipenv?
 The packages can be defined with _any_ [TOML](https://github.com/toml-lang/toml) file.  For example, if you use [poetry](https://python-poetry.org/),
@@ -210,7 +222,7 @@ and project setup.
 I got tired of installing packages by hand.  This project has a similar goal to [Cookiecutter Django](https://github.com/pydanny/cookiecutter-django).
 I didn't love the cookiecutter approach, so I wrote `indjections` as an alternative.
 [Cookiecutter Django](https://github.com/pydanny/cookiecutter-django) is a top down approach where packages are all bundled together.
-So if you don't like something, you need to spend time removing code (or write your own cookiecutter).
+So if you don't like something, you need to spend time removing code (or writing your own cookiecutter).
 `indjections` is a bottom up approach i.e., you can do the usual `django-admin startproject {project_name}`
 and then let `python manage.py indject` insert code in the right places.
 
