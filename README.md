@@ -163,7 +163,7 @@ class {object_name}Serializer(serializers.HyperlinkedModelSerializer):
 
 This will produce the following in `app1/serializers.py`...
 ```python
-### block: <package name> ####
+### block: djangorestframework ####
 from rest_framework import serializers
 
 class Model1Serializer(serializers.HyperlinkedModelSerializer):
@@ -175,7 +175,7 @@ class Model2Serializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Model2
         fields = ['field1', 'field2', 'field3']
-### endblock: <package name> ####
+### endblock: djangorestframework ####
 ```
 
 and the corresponding insertion in `app2/serializer.py`.
