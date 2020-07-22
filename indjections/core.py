@@ -126,16 +126,24 @@ def get_app_and_model_data():
     Refactored from get_api_strings() (see below)
 
     >>> pprint(get_app_and_model_data()[0]['models'])
-    [{'attributes': ['id', 'name'],
-      'import_path': 'tests.main.models',
-      'import_string': 'from tests.main.models import Author',
-      'name': 'Author',
-      'name_lower': 'author'},
-     {'attributes': ['id', 'text', 'author'],
-      'import_path': 'tests.main.models',
-      'import_string': 'from tests.main.models import Item',
-      'name': 'Item',
-      'name_lower': 'item'}]
+    [{'__doc__': 'Author(id, name)',
+      '__module__': 'tests.main.models',
+      'app_label': 'main',
+      'db_table': 'main_author',
+      'field_names': ['id', 'name'],
+      'model_name': 'author',
+      'object_name': 'Author',
+      'verbose_name': 'author',
+      'verbose_name_plural': 'authors'},
+     {'__doc__': 'Item(id, text, author)',
+      '__module__': 'tests.main.models',
+      'app_label': 'main',
+      'db_table': 'main_item',
+      'field_names': ['id', 'text', 'author'],
+      'model_name': 'item',
+      'object_name': 'Item',
+      'verbose_name': 'item',
+      'verbose_name_plural': 'items'}]
     """
     settings = sys.modules[os.environ['DJANGO_SETTINGS_MODULE']]
 
@@ -146,23 +154,29 @@ def get_app_and_model_data():
             app_dict.update({'label': app.label})  # e.g., auth
             app_dict.update({'module': app.name})  # e.g., django.contrib.auth
             app_dict.update({'verbose_name': app.verbose_name})
-            models = app.__dict__.get('models', None)
+            models = app.models
             model_list = []
             for model in models:
                 model_dict = {}
-                model_dict['name_lower'] = model
-                model_dict['import_path'] = models[model].__dict__['__module__']
-                model_name, model_attributes = models[model].__dict__['__doc__'][:-1].split('(')
-                model_dict['name'] = model_name
-                model_dict['attributes'] = model_attributes.split(', ')
-                model_dict['import_string'] = f"from {model_dict['import_path']} import {model_dict['name']}"
+                _meta = vars(models[model]._meta)
+                _meta_attributes_to_keep = [
+                    'model_name', 'verbose_name', 'verbose_name_plural',
+                    'db_table', 'object_name', 'app_label',
+                ]
+                for attribute in _meta_attributes_to_keep:
+                    model_dict[attribute] = _meta[attribute]
+                model_dict['__module__'] = vars(models[model])['__module__']  # this isn't meta technically
+                model_dict['__doc__'] = vars(models[model])['__doc__']  # this isn't meta technically
+                field_list = []
+                for field in models[model]._meta.fields:
+                    field_list.append(vars(field)['name'])
+                model_dict['field_names'] = field_list
                 model_list.append(model_dict)
             app_dict['models'] = model_list
             list_of_app_dicts.append(app_dict)
     return list_of_app_dicts
 
 
-# def get_api_strings(self, *args, **kwargs):
 def get_api_strings():
     # UNDER CONSTRUCTION
     """
@@ -209,16 +223,16 @@ def get_api_strings():
         insert_string = """from rest_framework import serializers, viewsets\n"""
         insert_string += """from rest_framework.permissions import IsAuthenticated\n"""
         for model in app['models']:
-            insert_string += f"from {model['import_path']} import {model['name']}\n\n"
+            insert_string += f"from {model['__module__']} import {model['object_name']}\n\n"
             insert_string += f"""
-class {model['name']}Serializer(serializers.HyperlinkedModelSerializer):
+class {model['object_name']}Serializer(serializers.HyperlinkedModelSerializer):
     class Meta:
-        model = {model['name']}
-        fields = {str(model['attributes'])}
+        model = {model['object_name']}
+        fields = {str(model['field_names'])}
 \n"""
             insert_string += f"""
-class {model['name']}ViewSet(viewsets.ModelViewSet):
-    queryset = {model['name']}.objects.all()
-    serializer_class = {model['name']}Serializer
+class {model['object_name']}ViewSet(viewsets.ModelViewSet):
+    queryset = {model['object_name']}.objects.all()
+    serializer_class = {model['object_name']}Serializer
 \n\n"""
     return insert_string
