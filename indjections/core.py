@@ -142,7 +142,10 @@ def get_app_and_model_data():
     list_of_app_dicts = []
     for app in list(apps.get_app_configs()):
         if app.path.startswith(settings.BASE_DIR):  # local apps only
-            app_dict = {'full_path': app.path}
+            app_dict = {'path': app.path}
+            app_dict.update({'label': app.label})  # e.g., auth
+            app_dict.update({'module': app.name})  # e.g., django.contrib.auth
+            app_dict.update({'verbose_name': app.verbose_name})
             models = app.__dict__.get('models', None)
             model_list = []
             for model in models:
@@ -201,7 +204,7 @@ def get_api_strings():
     app_list = get_app_and_model_data()  # returns a list of dicts
 
     for app in app_list:
-        views = os.path.join(app['full_path'], 'views.py')
+        views = os.path.join(app['path'], 'views.py')
         Path(views).touch()
         insert_string = """from rest_framework import serializers, viewsets\n"""
         insert_string += """from rest_framework.permissions import IsAuthenticated\n"""
