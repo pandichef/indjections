@@ -195,7 +195,7 @@ class Model2Serializer(serializers.HyperlinkedModelSerializer):
 
 and the corresponding insertion in `app2/serializers.py`.
 
-By default, all apps and models in the _project_ are including.  (Obviously, 
+By default, all apps and models in the _project_ are included.  (Obviously, 
 this won't impact third party packages in any way.)  To include/exclude a subset, 
 use the following syntax in the installation file...
 
