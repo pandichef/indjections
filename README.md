@@ -57,8 +57,9 @@ INDJECTIONS_SETTINGS = {
 }
 ```
 
-By default, all apps and models in the _project_ are included.  (Obviously, 
-this won't impact third party packages in any way.)  To include/exclude a subset,
+In some cases, a package installer might insert code at the app and model level (see the
+discussion below for more detail).  By default, all apps and models in the project are included.
+(Obviously, this won't impact third party packages in any way.)  To include/exclude a subset,
 you can add a setting to your project's `settings.py`:
 ```python
 INDJECTIONS_SETTINGS = {
