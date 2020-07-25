@@ -33,3 +33,15 @@ class {object_name}Serializer(serializers.${serializer_class}):
         model = {object_name}
         fields = {field_names}
 """).substitute(serializer_class=TYPE_OF_SERIALIZER))
+
+
+app_views = ("""
+from rest_framework import viewsets
+""", Template("""
+from .models import {object_name}
+from .serializers import {object_name}Serializer
+
+class {model_name}ViewSet(viewsets.ModelViewSet):
+    queryset = {model_name}.objects.all()
+    serializer_class = {model_name}Serializer
+""").substitute(serializer_class=TYPE_OF_SERIALIZER))
