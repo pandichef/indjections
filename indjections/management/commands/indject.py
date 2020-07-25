@@ -145,6 +145,18 @@ def execute_installation_file(package, settings, urls, package_path=package_path
         except AttributeError:
             print(f"{package} has no base_finally.")
 
+        # project_*
+        # Note: filter is implicitly similar to try/except block elsewhere
+        project_level_files = list(filter(lambda x: x.startswith('project_'),
+                                      dir(indjections)))  # list of strings
+        project_level_file_path = dirname(urls.__file__)
+        for file_name in project_level_files:
+            tuples_to_insert = getattr(indjections, file_name)
+            insertion_string = make_insertion_string_multi_app(tuples_to_insert=tuples_to_insert)
+            file_path = join(project_level_file_path, f'{file_name.replace("project_", "")}.py')
+            Path(file_path).touch()
+            indject_string(file_path, package, insertion_string, delete_only=delete_only)
+
         # app_*
         # Note: filter is implicitly similar to try/except block elsewhere
         app_level_files = list(filter(lambda x: x.startswith('app_'),

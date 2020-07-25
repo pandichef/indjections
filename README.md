@@ -177,7 +177,7 @@ of models `Model3` and `Model4`.  Moreover, we have an installer called
 settings = (
     '\n# project level code',
     '\nprint("{label}")',  # "label" is a Django name at the app level
-    '\nprint("{app_label}:{object_name}")',  # "app_label" and "object_name" are at the model level
+    '\nprint("{app_label}:{object_name}")\n',  # "app_label" and "object_name" are at the model level
 )
 ```
 
@@ -195,6 +195,20 @@ print("app2:Model4")
 ```
 
 Note that `settings = "print('hello')"` is equivalent to `settings = ("print('hello')",)`.
+
+Additional project files may be specified with a variable of the form `project_*`.
+For example, the following declaration will create a new `admin.py` file in the same directory
+as `settings.ROOT_URLCONF` (i.e., a project's `urls.py` file):
+
+```python
+project_admin = (
+    '\n# project level code',
+    '\nprint("{label}")',  # "label" is a Django name at the app level
+    '\nprint("{app_label}:{object_name}")\n',  # "app_label" and "object_name" are at the model level
+)
+
+urls = "from .admin import *"
+```
 
 Finally, installation files can have variables of the form `app_*`,
 which will insert code into app files of the form `app_*.py`.  Here, the first 
