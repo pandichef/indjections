@@ -14,9 +14,9 @@ with open(path.join(here, "Pipfile"), encoding="utf-8") as f:
     tobeinstalled = toml.loads(f.read())
 
 dct = tobeinstalled['packages']  # dictionary
-install_requires = [x + dct[x] if dct[x] != "*" else x for x in dct]
+install_requires = [x + dct[x] if dct[x] != "*" and not issubclass(dct[x].__class__, dict) else x for x in dct]
 dct = tobeinstalled['dev-packages']
-extras_require = {'dev': [x + dct[x] if dct[x] != "*" else x for x in dct]}
+extras_require = {'dev': [x + dct[x] if dct[x] != "*" and not issubclass(dct[x].__class__, dict) else x for x in dct]}
 # Note: this requires a pyproject.toml file with the following contents:
 # [build-system]
 # requires = ["setuptools", "wheel", "toml"]
