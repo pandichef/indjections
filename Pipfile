@@ -11,6 +11,7 @@ pytest-django = "*"
 django = "*"
 djangorestframework = "*"
 indjections = {editable = true, path = "."}
+pytest-pythonpath = "*"
 
 [packages]
 toml = "*"
