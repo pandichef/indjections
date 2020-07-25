@@ -1,3 +1,7 @@
+import os
+import shutil
+from inspect import getfile
+import django
 from pprint import pformat
 from pathlib import Path
 import re
@@ -71,12 +75,31 @@ def make_insertion_string_multi_app(tuples_to_insert, apps=project_app_list):
     return insertion_string
 
 
+def copy_django_admin_base():
+    """If defaults are used, just copy over all the Django admin templates
+    """
+    django_root = os.path.dirname(getfile(django))
+    project_root = os.getcwd()
+    django_admin_base = os.path.join(
+        django_root, 'contrib', 'admin', 'templates', 'admin', 'base.html')
+    project_admin_base = os.path.join(
+        project_root, 'templates', 'admin', 'base.html')
+    if not os.path.exists(project_admin_base):  # do not overwrite
+        # https://stackoverflow.com/questions/2793789/create-destination-path-for-shutil-copy-files
+        os.makedirs(os.path.dirname(project_admin_base), exist_ok=True)
+        shutil.copyfile(django_admin_base, project_admin_base)
+
+
 def execute_installation_file(package, settings, urls, package_path=package_path,
                               delete_only=False, verbosity=1, interactive=True):
+    # print(f"{package}:{delete_only}")
+
     indjections_settings = getattr(settings, 'INDJECTIONS_SETTINGS', {})
 
     base_html = indjections_settings.get(
         'BASE_HTML', join(settings.BASE_DIR, 'templates', 'admin', 'base.html'))
+    if base_html == join(settings.BASE_DIR, 'templates', 'admin', 'base.html'):
+        copy_django_admin_base()
 
     try:
         indjections = import_module(f'{package_path}.{package}')  # this fails on python 3.5
@@ -360,6 +383,8 @@ class Command(BaseCommand):
                 filter(lambda x: x in package_names, installed_packages))
 
         for package in installed_packages:
+            if package == "djangorestframework":
+                print(2)
             if self.verbosity >= 1:
                 if package in custom_list:
                     text_to_print = f'Indjecting {package} [custom version]'
@@ -371,7 +396,7 @@ class Command(BaseCommand):
                     print(text_to_print, end=end)
             execute_installation_file(package, settings, urls,
                                       verbosity=self.verbosity,
-                                      interactive=self.interactive)
+                                      interactive=self.interactive, delete_only=False)
 
         if self.verbosity >= 3:
             print('=====================================')
@@ -390,6 +415,8 @@ class Command(BaseCommand):
                                          indjections_packages_list))
 
         for package in packages_to_delete:
+            # if package == "djangorestframework":
+            #     print(1)
             if self.verbosity >= 3:
                 print(f'Cleaning up {package}')
             execute_installation_file(package, settings, urls, delete_only=True,
