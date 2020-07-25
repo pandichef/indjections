@@ -1,6 +1,7 @@
-from os.path import basename
+from os.path import basename, dirname
 import re
 import toml
+# from django.core.management.base import CommandError
 
 # 1. unlocked = deleted and rewrite... unchanged
 # 2. unlocked = deleted and rewrite... modified
@@ -32,7 +33,8 @@ def indject_string_at(original_string: str, string_to_append: str,
 
 
 def indject_string(file_name, package_name, insert_string, is_template=False,
-                   reference_regex=None, after=True, delete_only=False):
+                   reference_regex=None, after=True, delete_only=False,
+                   verbosity=1, interactive=True):
     if is_template:
         _o = '{'
         _o2 = r'\{'  # { is apparently a special regex character
@@ -48,35 +50,65 @@ def indject_string(file_name, package_name, insert_string, is_template=False,
     # if re.search(f"""\n\n{_o2}### block: {package_name}/lock ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}""",
     if re.search(f"""{_o2}### block: {package_name}/lock ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}\n""",
             original_file_string) and not delete_only:  # note: this means that locked blocks should also be deleted
-        print(f"{package_name} block found and locked in {basename(file_name)}. Doing nothing.")
+        if verbosity >= 2:
+            # print(f"    {package_name} block found and locked in {basename(file_name)}. Doing nothing.")
+            print(f"    Block found and already locked in {basename(file_name)}")
     else:
-        # file_string = re.sub(f"""\n\n{_o2}### block: {package_name} ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}""",
-        file_string = re.sub(f"""{_o2}### block: {package_name} ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}\n""",
-            "", original_file_string)
-        found_block_and_deleted = file_string != original_file_string
-        if not delete_only:
-            file_string = indject_string_at(
-                file_string,
-                f"""{_o}### block: {package_name} ###{_c}{insert_string}{_o}### endblock: {package_name} ###{_c}\n""",
-                reference_regex, after)
+        lets_lock_it = False
+        if interactive and not delete_only:  # If text changed, ask user if they'd like the lock the file
+            try:
+                matched_text = re.search(
+                    f"""{_o2}### block: {package_name} ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}\n""",
+                    original_file_string)[0]  # assumes only one found; todo: handle more than one
+            except TypeError:
+                matched_text = ""  # no match found
+            # get user input only if the string changed
+            if matched_text and matched_text != \
+                    f"""{_o2}### block: {package_name} ###{_c}{insert_string}{_o2}### endblock: {package_name} ###{_c}\n""":
+                input_string = f"{package_name} block found in {basename(file_name)}. Would you like to lock it? (N/y)"
+                user_input = input(input_string)
+                if user_input in ['Y', 'y', 'yes', 'Yes', "YES"]:
+                    file_string = original_file_string.replace(
+                        f"""{_o2}### block: {package_name} ###{_c}""",
+                        f"""{_o2}### block: {package_name}/lock ###{_c}""")
+                    lets_lock_it = True
+                    event = 'locked'
 
-        # file_string += f"""
-        # {_o}### block: {package_name} ###{_c}{insert_string}{_o}### endblock: {package_name} ###{_c}
-        # """  # implicitly adds to the end of the file
+        if not lets_lock_it:
+            file_string = re.sub(f"""{_o2}### block: {package_name} ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}\n""",
+                "", original_file_string)
+            if file_string != original_file_string:
+                event = 'deleted'
+            else:
+                event = 'new'
+            if not delete_only:
+                file_string = indject_string_at(
+                    file_string,
+                    f"""{_o}### block: {package_name} ###{_c}{insert_string}{_o}### endblock: {package_name} ###{_c}\n""",
+                    reference_regex, after)
 
         with open(file_name, 'w') as f:  # https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files
             f.write(file_string)
 
-        if not delete_only:
-            if found_block_and_deleted:
-                print(f"{package_name} block found and deleted in {basename(file_name)}. Inserting new block.")
+        # Various print statements
+        dirname_plus_filename = f"{basename(dirname(file_name))}/{basename(file_name)}"
+        if not delete_only and verbosity >= 2:
+            if event == "deleted":
+                # print(f"    {package_name} block found and deleted in {basename(file_name)}. Inserting new block.")
+                print(f"    Block found and overwritten in {dirname_plus_filename}")
+            elif event == "locked":
+                print(f"    Block found and locked in {dirname_plus_filename}")
             else:
-                print(f"{package_name} block not found in {basename(file_name)}. Inserting new block.")
-        else:
-            if found_block_and_deleted:
-                print(f"{package_name} block found and deleted in {basename(file_name)}.")
+                print(f"    Inserting new block in {dirname_plus_filename}")
+        elif delete_only and verbosity >= 3:
+            if event == "deleted":
+                # print(f"    {package_name} block found and deleted in {dirname_plus_filename}.")
+                print(f"    Deleting block in {dirname_plus_filename}")
+            if event == "locked":
+                # print(f"    {package_name} block found and deleted in {dirname_plus_filename}.")
+                print(f"    Deleting block in {dirname_plus_filename}")
             else:
-                pass  # print(f"{package_name} block not found in {basename(file_name)}.")
+                print(f"    Block not found (or locked) in {dirname_plus_filename}")
 
 
 def parse_toml(toml_string: str, toml_keys) -> list:
@@ -86,27 +118,11 @@ def parse_toml(toml_string: str, toml_keys) -> list:
     try:
         for key_string in toml_keys:
             keys = key_string.split('.')
-
-            # assert False, issubclass(type(tobeinstalled['dev-packages']['indjections']), InlineTableDict)
-            # package_header_keys = package_header.split('.')
-            # dev_package_header_keys = dev_package_header.split('.')
             dct = tobeinstalled
             for key in keys:
-                print(key)
                 dct = dct[key]
-            # package_list = []
-            # dct = tobeinstalled['install_requires']
-            # install_requires = [x + dct[x] if dct[x] != "*" and not issubclass(type(dct[x]), InlineTableDict) else x for x in dct]
             packages = list(dct)
-            # dct = tobeinstalled
-            # for key in dev_package_header_keys:
-            #     dct = dct[key]
-            # dct = tobeinstalled['extras_require']['dev']
-            # extras_require_dev = [x + dct[x] if dct[x] != "*" and not issubclass(type(dct[x]), InlineTableDict) else x for x in dct]
-            # extras_require_dev = list(dct)
-            # assert False, extras_require_dev
             concatenated_packages += packages
-        # assert False, concatenated_packages
     except KeyError:
         pass  # This key wasn't found in the TOML file
     return concatenated_packages

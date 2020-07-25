@@ -6,11 +6,15 @@ from os import listdir
 from os.path import dirname, isfile, join
 from importlib import import_module
 import sys
-from django.core.management.base import BaseCommand
+from colorama import Fore, Back, Style, Cursor, init
+# from termcolor
+from django.core.management.base import BaseCommand, CommandError
 from indjections.core import indject_string, parse_toml
 from indjections import package_path
 from indjections.core import get_app_and_model_data
 
+
+init()  # enable text coloring on Windows
 project_app_list = get_app_and_model_data()
 
 
@@ -68,7 +72,7 @@ def make_insertion_string_multi_app(tuples_to_insert, apps=project_app_list):
 
 
 def execute_installation_file(package, settings, urls, package_path=package_path,
-                              delete_only=False):
+                              delete_only=False, verbosity=1, interactive=True):
     indjections_settings = getattr(settings, 'INDJECTIONS_SETTINGS', {})
 
     base_html = indjections_settings.get(
@@ -82,47 +86,83 @@ def execute_installation_file(package, settings, urls, package_path=package_path
             try:
                 for hook in indjections.pre_hooks:
                     hook()
+                if verbosity >= 2:
+                    print(f"    {len(indjections.pre_hooks)} pre_hooks executed")
             except AttributeError:
-                print(f"{package} has no pre_hooks.")
+                if verbosity >= 3:
+                    # print(f"    {package} has no pre_hooks")
+                    print(f"    No pre_hooks found")
         else:
             try:
                 for hook in indjections.pre_hooks_delete:
                     hook()
+                if verbosity >= 3:
+                    print(f"    {len(indjections.pre_hooks_delete)} pre_hooks_delete executed")
             except AttributeError:
-                pass  # print(f"{package} has no pre_hooks_delete.")
+                if verbosity >= 3:
+                    # print(f"    {package} has no pre_hooks_delete")
+                    print(f"    No pre_hooks_delete found")
 
         # settings
         try:
             insertion_string = make_insertion_string_multi_app(tuples_to_insert=indjections.settings)
-            indject_string(settings.__file__, package, insertion_string, delete_only=delete_only)
+            indject_string(settings.__file__, package, insertion_string,
+                           delete_only=delete_only, verbosity=verbosity)
+            # if verbosity >= 2 and not delete_only:
+            #     print(f"    Block in settings.py injected")
+            # if verbosity >= 3 and delete_only:
+            #     print(f"    Block in settings.py deleted")
         except AttributeError:
-            print(f"{package} has no settings indjection.")
+            if verbosity >= 3:
+                # print(f"    {package} has no settings indjection")
+                print(f"    No settings declaration found")
 
         # urls
         try:
             insertion_string = make_insertion_string_multi_app(tuples_to_insert=indjections.urls)
-            indject_string(urls.__file__, package, insertion_string, delete_only=delete_only)
+            indject_string(urls.__file__, package, insertion_string,
+                           delete_only=delete_only, verbosity=verbosity)
+            # if verbosity >= 2 and not delete_only:
+            #     print(f"    block in urls.py injected")
+            # if verbosity >= 3 and delete_only:
+            #     print(f"    block in urls.py deleted")
         except AttributeError:
-            print(f"{package} has no urls indjection.")
+            if verbosity >= 3:
+                # print(f"    {package} has no urls indjection")
+                print(f"    No urls declaration found")
 
         # base_top
         try:
             insertion_string = make_insertion_string_multi_app(tuples_to_insert=indjections.base_top)
             indject_string(base_html,
                            package + '__base_top', insertion_string, after=False,
-                           is_template=True, delete_only=delete_only)
+                           is_template=True, delete_only=delete_only,
+                           verbosity=verbosity)
+            # if verbosity >= 2 and not delete_only:
+            #     print(f"    block in base_top injected")
+            # if verbosity >= 3 and delete_only:
+            #     print(f"    block in base_top deleted")
         except AttributeError:
-            print(f"{package} has no base_top.")
+            if verbosity >= 3:
+                # print(f"    {package} has no base_top")
+                print(f"    No base_top declaration found")
 
         # base_head
         try:
             insertion_string = make_insertion_string_multi_app(tuples_to_insert=indjections.base_head)
             indject_string(base_html,
-                           package + '__base_head', insertion_string, after=False,
-                           reference_regex="</head>", is_template=True,
-                           delete_only=delete_only)
+                           package + '__base_head', insertion_string,
+                           after=False, reference_regex="</head>",
+                           is_template=True, delete_only=delete_only,
+                           verbosity=verbosity)
+            # if verbosity >= 2 and not delete_only:
+            #     print(f"    block in base_head injected")
+            # if verbosity >= 3 and delete_only:
+            #     print(f"    block in base_head deleted")
         except AttributeError:
-            print(f"{package} has no base_head.")
+            if verbosity >= 3:
+                # print(f"    {package} has no base_head")
+                print(f"    No base_head declaration found")
 
         # base_body
         try:
@@ -130,10 +170,15 @@ def execute_installation_file(package, settings, urls, package_path=package_path
             indject_string(base_html,
                            package + '__base_body', insertion_string, after=True,
                            reference_regex="<body[\s\S]*?>", is_template=True,
-                           delete_only=delete_only)
+                           delete_only=delete_only, verbosity=verbosity)
             # regex: https://stackoverflow.com/questions/6441015/symbol-for-any-number-of-any-characters-in-regex
+            # if verbosity >= 2 and not delete_only:
+            #     print(f"    block in base_body injected")
+            # if verbosity >= 3 and delete_only:
+            #     print(f"    block in base_body deleted")
         except AttributeError:
-            print(f"{package} has no base_body.")
+            if verbosity >= 3:
+                print(f"    No base_body declaration found")
 
         # base_finally i.e., the area just before the </body> tag
         try:
@@ -141,9 +186,15 @@ def execute_installation_file(package, settings, urls, package_path=package_path
             indject_string(base_html,
                            package + '__base_finally', insertion_string, after=False,
                            reference_regex="</body>", is_template=True,
-                           delete_only=delete_only)
+                           delete_only=delete_only, verbosity=verbosity)
+            # if verbosity >= 2 and not delete_only:
+            #     print(f"    block in base_finally injected")
+            # if verbosity >= 3 and delete_only:
+            #     print(f"    block in base_finally deleted")
         except AttributeError:
-            print(f"{package} has no base_finally.")
+            if verbosity >= 3:
+                # print(f"    {package} has no base_finally")
+                print(f"    No base_finally declaration found")
 
         # project_*
         # Note: filter is implicitly similar to try/except block elsewhere
@@ -153,9 +204,18 @@ def execute_installation_file(package, settings, urls, package_path=package_path
         for file_name in project_level_files:
             tuples_to_insert = getattr(indjections, file_name)
             insertion_string = make_insertion_string_multi_app(tuples_to_insert=tuples_to_insert)
-            file_path = join(project_level_file_path, f'{file_name.replace("project_", "")}.py')
+            name_in_file_system = f'{file_name.replace("project_", "")}.py'
+            file_path = join(project_level_file_path, name_in_file_system)
             Path(file_path).touch()
-            indject_string(file_path, package, insertion_string, delete_only=delete_only)
+            indject_string(file_path, package, insertion_string,
+                           delete_only=delete_only, verbosity=verbosity)
+            # if verbosity >= 2:
+            #     print(f"    {package} has a {file_name} declaration")
+            #     print(f'    Inserting {name_in_file_system} in project configuration directory')
+        if not project_level_files:
+            if verbosity >= 3:
+                print(f"    No project_* declarations found")
+
 
         # app_*
         # Note: filter is implicitly similar to try/except block elsewhere
@@ -175,34 +235,64 @@ def execute_installation_file(package, settings, urls, package_path=package_path
                 else:  # default: include all apps
                     include_this_app = True
                 insertion_string = make_insertion_string(tuples_to_insert, app)
-                file_path = join(app['path'], f'{file_name.replace("app_", "")}.py')
+                name_in_file_system = f'{file_name.replace("app_", "")}.py'
+                file_path = join(app['path'], name_in_file_system)
                 Path(file_path).touch()  # make sure file exists
                 indject_string(file_path, package, insertion_string,
-                               delete_only=not include_this_app)  # delete if excluded!
+                               delete_only=not include_this_app,
+                               verbosity=verbosity)  # delete if excluded!
+                # if verbosity >= 2:
+                    # print(f'    Inserting {name_in_file_system} in app "{app["label"]}"')
+                    # print(f'    ........................ in app "{app["label"]}"')
+
+        if not app_level_files:
+            if verbosity >= 3:
+                print(f"    No app_* declarations found")
+
 
         # post (un)install hooks
         if not delete_only:
             try:
                 for hook in indjections.post_hooks:
                     hook()
+                if verbosity >= 2:
+                    # assert False, package
+                    print(f"    {len(indjections.post_hooks)} post_hooks executed")
             except AttributeError:
-                print(f"{package} has no post_hooks.")
+                if verbosity >= 3:
+                    # print(f"    {package} has no post_hooks")
+                    print(f"    No post_hooks found")
         else:
             try:
                 for hook in indjections.post_hooks_delete:
                     hook()
+                if verbosity >= 3:
+                    print(f"    {len(indjections.post_hooks_delete)} post_hooks_delete executed")
             except AttributeError:
-                pass  # print(f"{package} has no post_hooks_delete.")
+                if verbosity >= 3:
+                    # print(f"    {package} has no post_hooks_delete")
+                    print(f"    No post_hooks_delete found")
+
+        # final results
+        if delete_only:
+            if verbosity >= 3:
+                print(Fore.GREEN + "    <==== Successful ====>" + Fore.RESET)
+        elif verbosity >= 1:  # if 2, then verbose output implies success
+            print(Fore.GREEN + "    <==== Successful ====>" + Fore.RESET)
     except ModuleNotFoundError:
-        print(f"{package} has no defined indjections.")
-    print('################################################################################')
+        if verbosity >= 1:
+            # print(f"    {package} has no defined indjections")
+            print(Fore.RED + "    <==== None found ====>" + Fore.RESET)
 
 
-def use_custom_installers(directory_name='custom_installers'):
+def load_custom_installers(directory_name: str='custom_installers') -> list:
     from indjections import package_path
     try:
         files = os.listdir(directory_name)
-        files.remove('__init__.py')
+        try:
+            files.remove('__init__.py')
+        except ValueError:
+            pass  # remove if __init__.py exists; otherwise do nothing
         for file in files:
             module_name = os.path.splitext(file)[0]
             exec(f'from {directory_name} import {module_name}')  # local version
@@ -211,15 +301,39 @@ def use_custom_installers(directory_name='custom_installers'):
             except ModuleNotFoundError:
                 pass
             exec(f"""sys.modules[f'{package_path}.{module_name}'] = {module_name}""")
+        # if verbosity >= 1:
+        #     list_of_custom_installers = ', '.join(list(
+        #         map(lambda x: x.replace('.py', ''), files)
+        #     ))
+        #     print(f"Using the following custom installers: {list_of_custom_installers}\n")
+        return list(map(lambda x: x.replace('.py', ''), files))
     except FileNotFoundError:
-        pass  # no custom installers found
+        return []  # directory not found
 
 
 class Command(BaseCommand):
-    help = 'Modifies settings.py and urls.py with boilerplate'
+    help = 'Install third party Django packages by injecting code into ' \
+           'settings.py, urls.py, and app files.'
 
-    def handle(self, *args, **kwargs):
-        use_custom_installers()
+    def add_arguments(self, parser):
+        parser.add_argument(
+            'args', metavar='package_name', nargs='*',
+            help='Specify the package name to inject code for.',
+        )
+        parser.add_argument(
+            '--noinput', '--no-input', action='store_false', dest='interactive',
+            help='Tells Django to NOT prompt the user for input of any kind.',
+        )
+
+    def handle(self, *package_names, **options):
+        self.verbosity = options.get('verbosity', 0)
+        # 0=no output
+        # 1=display installations
+        # 2=display installation details
+        # 3=display additional installation details & clean up details
+        self.interactive = options.get('interactive', False)
+
+        custom_list = load_custom_installers()
 
         # not "from django.conf import settings" to prevent tests from loading Django
         settings = sys.modules[os.environ['DJANGO_SETTINGS_MODULE']]
@@ -241,14 +355,28 @@ class Command(BaseCommand):
             installed_packages = parse_toml(
                 f.read(), toml_keys)
 
-        # installed_packages = extras_require + install_requires
+        if package_names:
+            installed_packages = list(
+                filter(lambda x: x in package_names, installed_packages))
 
         for package in installed_packages:
-            execute_installation_file(package, settings, urls)
+            if self.verbosity >= 1:
+                if package in custom_list:
+                    text_to_print = f'Indjecting {package} [custom version]'
+                    end = ' '*(57-len(text_to_print)) if self.verbosity == 1 else '\n'
+                    print(text_to_print, end=end)
+                else:
+                    text_to_print = f'Indjecting {package}'
+                    end = ' '*(57-len(text_to_print)) if self.verbosity == 1 else '\n'
+                    print(text_to_print, end=end)
+            execute_installation_file(package, settings, urls,
+                                      verbosity=self.verbosity,
+                                      interactive=self.interactive)
 
-        print('=====================================')
-        print('====> Cleaning up removed packages...')
-        print('=====================================')
+        if self.verbosity >= 3:
+            print('=====================================')
+            print('====> Cleaning up removed packages...')
+            print('=====================================')
         import indjections.packages
         indjections_packages_dir = dirname(vars(indjections.packages)['__file__'])
         indjections_packages_list = listdir(indjections_packages_dir)
@@ -262,4 +390,8 @@ class Command(BaseCommand):
                                          indjections_packages_list))
 
         for package in packages_to_delete:
-            execute_installation_file(package, settings, urls, delete_only=True)
+            if self.verbosity >= 3:
+                print(f'Cleaning up {package}')
+            execute_installation_file(package, settings, urls, delete_only=True,
+                                      verbosity=self.verbosity,
+                                      interactive=self.interactive)

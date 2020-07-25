@@ -40,6 +40,7 @@ setup(
     install_requires=[
         "django",
         'toml',
+        'colorama',
     ],  # Optional
     extras_require={
         "dev": [
