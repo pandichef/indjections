@@ -213,7 +213,7 @@ urls = "from .admin import *"
 Finally, installation files can have variables of the form `app_*`,
 which will insert code into app files of the form `app_*.py`.  Here, the first 
 element of the tuple variable is at the **app** level and the second element is 
-at the **model level**.  For example, say the installer for `djangorestframework` 
+at the **model** level.  For example, say the installer for `djangorestframework` 
 has the following content:
 
 ```python

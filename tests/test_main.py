@@ -9,7 +9,7 @@ settings = sys.modules[os.environ['DJANGO_SETTINGS_MODULE']]
 importlib.import_module(settings.ROOT_URLCONF)
 urls = sys.modules[settings.ROOT_URLCONF]
 
-test_app_dir = join(dirname(settings.__file__), 'main')
+test_app_dir = join(dirname(dirname(settings.__file__)), 'main')
 
 # assert False, test_app_dir
 
@@ -27,6 +27,8 @@ def setup_and_cleanup(request):
         original_urls_string = fn.read()
     with open(join(test_app_dir, 'serializers.py'), 'r') as fn:
         original_serializers_string = fn.read()
+    with open(join(test_app_dir, 'views.py'), 'r') as fn:
+        original_views_string = fn.read()
     def restore_files():
         with open(settings.__file__, 'w') as ifn:
             ifn.write(original_settings_string)
@@ -34,6 +36,8 @@ def setup_and_cleanup(request):
             ifn.write(original_urls_string)
         with open(join(test_app_dir, 'serializers.py'), 'w') as ifn:
             ifn.write(original_serializers_string)
+        with open(join(test_app_dir, 'views.py'), 'w') as ifn:
+            ifn.write(original_views_string)
     request.addfinalizer(restore_files)
     return original_settings_string, original_urls_string
 

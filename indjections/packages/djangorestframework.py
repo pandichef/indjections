@@ -42,6 +42,6 @@ from .models import {object_name}
 from .serializers import {object_name}Serializer
 
 class {model_name}ViewSet(viewsets.ModelViewSet):
-    queryset = {model_name}.objects.all()
-    serializer_class = {model_name}Serializer
+    queryset = {object_name}.objects.all()
+    serializer_class = {object_name}Serializer
 """).substitute(serializer_class=TYPE_OF_SERIALIZER))

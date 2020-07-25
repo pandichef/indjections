@@ -65,7 +65,7 @@ def indject_string(file_name, package_name, insert_string, is_template=False,
             # get user input only if the string changed
             if matched_text and matched_text != \
                     f"""{_o2}### block: {package_name} ###{_c}{insert_string}{_o2}### endblock: {package_name} ###{_c}\n""":
-                input_string = f"    Altered block found in {basename(file_name)}. Would you like to lock it? (N/y)"
+                input_string = f"    Altered block found in {basename(file_name)}. Would you like to lock rather than overwrite? (y/N)"
                 user_input = input(input_string)
                 if user_input in ['Y', 'y', 'yes', 'Yes', "YES"]:
                     file_string = original_file_string.replace(
@@ -143,7 +143,7 @@ def get_app_and_model_data():
 
     >>> pprint(get_app_and_model_data()[0]['models'])
     [{'__doc__': 'Author(id, name)',
-      '__module__': 'tests.main.models',
+      '__module__': 'tests.project.main.models',
       'app_label': 'main',
       'db_table': 'main_author',
       'field_names': ['id', 'name'],
@@ -152,7 +152,7 @@ def get_app_and_model_data():
       'verbose_name': 'author',
       'verbose_name_plural': 'authors'},
      {'__doc__': 'Item(id, text, author)',
-      '__module__': 'tests.main.models',
+      '__module__': 'tests.project.main.models',
       'app_label': 'main',
       'db_table': 'main_item',
       'field_names': ['id', 'text', 'author'],
@@ -162,6 +162,8 @@ def get_app_and_model_data():
       'verbose_name_plural': 'items'}]
     """
     settings = sys.modules[os.environ['DJANGO_SETTINGS_MODULE']]
+    # assert False, settings.BASE_DIR
+    # assert False, apps.get_app_configs()
 
     list_of_app_dicts = []
     for app in list(apps.get_app_configs()):
@@ -199,7 +201,7 @@ def get_api_strings():
     >>> print(get_api_strings())
     from rest_framework import serializers, viewsets
     from rest_framework.permissions import IsAuthenticated
-    from tests.main.models import Author
+    from tests.project.main.models import Author
     <BLANKLINE>
     <BLANKLINE>
     class AuthorSerializer(serializers.HyperlinkedModelSerializer):
@@ -213,7 +215,7 @@ def get_api_strings():
         serializer_class = AuthorSerializer
     <BLANKLINE>
     <BLANKLINE>
-    from tests.main.models import Item
+    from tests.project.main.models import Item
     <BLANKLINE>
     <BLANKLINE>
     class ItemSerializer(serializers.HyperlinkedModelSerializer):
@@ -229,7 +231,7 @@ def get_api_strings():
     <BLANKLINE>
     <BLANKLINE>
     """
-    settings = sys.modules[os.environ['DJANGO_SETTINGS_MODULE']]
+    # settings = sys.modules[os.environ['DJANGO_SETTINGS_MODULE']]
 
     app_list = get_app_and_model_data()  # returns a list of dicts
 

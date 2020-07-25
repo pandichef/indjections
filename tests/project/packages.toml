@@ -1,5 +1,5 @@
 [install_requires]
-djangorestframework = "*"
+#djangorestframework = "*"
 #django = "<3"
 
 [extras_require.dev]

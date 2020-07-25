@@ -1,5 +1,5 @@
 import os
-BASE_DIR = os.path.dirname(__file__)
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 DEBUG = True
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -9,7 +9,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'indjections',
-    'tests.main',
+    # 'main',
+    'tests.project.main',
 ]
 SECRET_KEY = 'not very secret in tests'
 MIDDLEWARE = [
@@ -21,7 +22,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-ROOT_URLCONF = 'tests.urls'
+ROOT_URLCONF = 'tests.project.config.urls'
+# ROOT_URLCONF = 'config.urls'
 USE_TZ = True
 TEMPLATES = [
     {
@@ -47,14 +49,17 @@ DATABASES = {
         # 'TEST': {"NAME": ':memory:'},
     }
 }
+STATIC_URL = '/static/'
 
 INDJECTIONS_SETTINGS = {
-    'TOML_FILE': './tests/pyproject.toml',
+    # 'TOML_FILE': './tests/project/packages.toml',
+    'TOML_FILE': os.path.join(BASE_DIR, 'packages.toml'),
     'TOML_KEYS': [
         "install_requires",
         "extras_require.dev",
         "indjections.extras",
     ],
     # 'DEV_PACKAGES_KEY': "extras_require.dev",
-    'BASE_HTML': './tests/base.html',  # tmp
+    # 'BASE_HTML': './tests/project/templates/base.html',  # tmp
+    'BASE_HTML': os.path.join(BASE_DIR, 'templates', 'base.html'),
 }

@@ -8,10 +8,11 @@ pytest = "*"
 ipython = "*"
 pytest-cov = "*"
 pytest-django = "*"
-pytest-pythonpath = "*"
+django = "*"
+djangorestframework = "*"
+indjections = {editable = true, path = "."}
 
 [packages]
-django = "*"
 toml = "*"
 colorama = "*"
 
