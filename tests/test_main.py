@@ -9,7 +9,7 @@ settings = sys.modules[os.environ['DJANGO_SETTINGS_MODULE']]
 importlib.import_module(settings.ROOT_URLCONF)
 urls = sys.modules[settings.ROOT_URLCONF]
 
-test_app_dir = join(dirname(dirname(settings.__file__)), 'main')
+test_app_dir = join(dirname(settings.__file__), 'main')
 
 # assert False, test_app_dir
 

@@ -143,7 +143,7 @@ def get_app_and_model_data():
 
     >>> pprint(get_app_and_model_data()[0]['models'])
     [{'__doc__': 'Author(id, name)',
-      '__module__': 'tests.project.main.models',
+      '__module__': 'tests.main.models',
       'app_label': 'main',
       'db_table': 'main_author',
       'field_names': ['id', 'name'],
@@ -152,7 +152,7 @@ def get_app_and_model_data():
       'verbose_name': 'author',
       'verbose_name_plural': 'authors'},
      {'__doc__': 'Item(id, text, author)',
-      '__module__': 'tests.project.main.models',
+      '__module__': 'tests.main.models',
       'app_label': 'main',
       'db_table': 'main_item',
       'field_names': ['id', 'text', 'author'],
@@ -201,7 +201,7 @@ def get_api_strings():
     >>> print(get_api_strings())
     from rest_framework import serializers, viewsets
     from rest_framework.permissions import IsAuthenticated
-    from tests.project.main.models import Author
+    from tests.main.models import Author
     <BLANKLINE>
     <BLANKLINE>
     class AuthorSerializer(serializers.HyperlinkedModelSerializer):
@@ -215,7 +215,7 @@ def get_api_strings():
         serializer_class = AuthorSerializer
     <BLANKLINE>
     <BLANKLINE>
-    from tests.project.main.models import Item
+    from tests.main.models import Item
     <BLANKLINE>
     <BLANKLINE>
     class ItemSerializer(serializers.HyperlinkedModelSerializer):
