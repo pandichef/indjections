@@ -291,10 +291,10 @@ By the way, `indjections.extras` is a special name.  By default,
 * [django-debug-toolbar](https://django-debug-toolbar.readthedocs.io/en/latest/installation.html)
 * [djangorestframework](https://www.django-rest-framework.org/#installation)
 * [django-hijack](https://django-hijack.readthedocs.io/en/stable/#installation)
+* [django-allauth](https://django-allauth.readthedocs.io/en/latest/installation.html)
 
 ### Seeking Contributors for the Following Packages
 * django-filter
-* django-allauth
 * django-cors-headers
 * django-tables2
 * djangoql
