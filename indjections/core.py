@@ -65,7 +65,7 @@ def indject_string(file_name, package_name, insert_string, is_template=False,
             # get user input only if the string changed
             if matched_text and matched_text != \
                     f"""{_o2}### block: {package_name} ###{_c}{insert_string}{_o2}### endblock: {package_name} ###{_c}\n""":
-                input_string = f"{package_name} block found in {basename(file_name)}. Would you like to lock it? (N/y)"
+                input_string = f"    Altered block found in {basename(file_name)}. Would you like to lock it? (N/y)"
                 user_input = input(input_string)
                 if user_input in ['Y', 'y', 'yes', 'Yes', "YES"]:
                     file_string = original_file_string.replace(
