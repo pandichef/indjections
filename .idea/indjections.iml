@@ -9,7 +9,7 @@
       <excludeFolder url="file://$MODULE_DIR$/dist" />
       <excludeFolder url="file://$MODULE_DIR$/indjections.egg-info" />
     </content>
-    <orderEntry type="jdk" jdkName="Python 3.7 (indjections)" jdkType="Python SDK" />
+    <orderEntry type="jdk" jdkName="Pipenv (indjections)" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
   <component name="PackageRequirementsSettings">

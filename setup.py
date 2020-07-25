@@ -9,6 +9,19 @@ here = path.abspath(path.dirname(__file__))
 with open(path.join(here, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
 
+with open(path.join(here, "Pipfile"), encoding="utf-8") as f:
+    import toml  # requires pyproject.toml file
+    tobeinstalled = toml.loads(f.read())
+
+dct = tobeinstalled['packages']  # dictionary
+install_requires = [x + dct[x] if dct[x] != "*" else x for x in dct]
+dct = tobeinstalled['dev-packages']
+extras_require = {'dev': [x + dct[x] if dct[x] != "*" else x for x in dct]}
+# Note: this requires a pyproject.toml file with the following contents:
+# [build-system]
+# requires = ["setuptools", "wheel", "toml"]
+
+
 setup(
     name="indjections",  # Required
     version="0.0.3",  # Required
@@ -37,21 +50,23 @@ setup(
     ],
     packages=find_packages(exclude=["contrib", "docs", "tests"]),  # Required
     python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*, <4",
-    install_requires=[
-        "django",
-        'toml',
-        'colorama',
-    ],  # Optional
-    extras_require={
-        "dev": [
-            # 'django-debug-toolbar',
-            'pytest',
-            # 'pytest-mock',
-            'ipython',
-            'pytest-cov',
-            'pytest-django',
-        ]
-    },  # Optional
+    install_requires=install_requires,
+    extras_require=extras_require,
+    # install_requires=[
+    #     "django",
+    #     'toml',
+    #     'colorama',
+    # ],  # Optional
+    # extras_require={
+    #     "dev": [
+    #         # 'django-debug-toolbar',
+    #         'pytest',
+    #         # 'pytest-mock',
+    #         'ipython',
+    #         'pytest-cov',
+    #         'pytest-django',
+    #     ]
+    # },  # Optional
     dependency_links=[],
     # project_urls={  # Optional
     #     "Bug Reports": "https://github.com/pypa/sampleproject/issues",
