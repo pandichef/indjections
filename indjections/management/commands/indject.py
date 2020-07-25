@@ -107,7 +107,7 @@ def execute_installation_file(package, settings, urls, package_path=package_path
         try:
             insertion_string = make_insertion_string_multi_app(tuples_to_insert=indjections.settings)
             indject_string(settings.__file__, package, insertion_string,
-                           delete_only=delete_only, verbosity=verbosity)
+                           delete_only=delete_only, verbosity=verbosity, interactive=interactive)
             # if verbosity >= 2 and not delete_only:
             #     print(f"    Block in settings.py injected")
             # if verbosity >= 3 and delete_only:
@@ -121,7 +121,7 @@ def execute_installation_file(package, settings, urls, package_path=package_path
         try:
             insertion_string = make_insertion_string_multi_app(tuples_to_insert=indjections.urls)
             indject_string(urls.__file__, package, insertion_string,
-                           delete_only=delete_only, verbosity=verbosity)
+                           delete_only=delete_only, verbosity=verbosity, interactive=interactive)
             # if verbosity >= 2 and not delete_only:
             #     print(f"    block in urls.py injected")
             # if verbosity >= 3 and delete_only:
@@ -137,7 +137,7 @@ def execute_installation_file(package, settings, urls, package_path=package_path
             indject_string(base_html,
                            package + '__base_top', insertion_string, after=False,
                            is_template=True, delete_only=delete_only,
-                           verbosity=verbosity)
+                           verbosity=verbosity, interactive=interactive)
             # if verbosity >= 2 and not delete_only:
             #     print(f"    block in base_top injected")
             # if verbosity >= 3 and delete_only:
@@ -154,7 +154,7 @@ def execute_installation_file(package, settings, urls, package_path=package_path
                            package + '__base_head', insertion_string,
                            after=False, reference_regex="</head>",
                            is_template=True, delete_only=delete_only,
-                           verbosity=verbosity)
+                           verbosity=verbosity, interactive=interactive)
             # if verbosity >= 2 and not delete_only:
             #     print(f"    block in base_head injected")
             # if verbosity >= 3 and delete_only:
@@ -170,7 +170,7 @@ def execute_installation_file(package, settings, urls, package_path=package_path
             indject_string(base_html,
                            package + '__base_body', insertion_string, after=True,
                            reference_regex="<body[\s\S]*?>", is_template=True,
-                           delete_only=delete_only, verbosity=verbosity)
+                           delete_only=delete_only, verbosity=verbosity, interactive=interactive)
             # regex: https://stackoverflow.com/questions/6441015/symbol-for-any-number-of-any-characters-in-regex
             # if verbosity >= 2 and not delete_only:
             #     print(f"    block in base_body injected")
@@ -186,7 +186,7 @@ def execute_installation_file(package, settings, urls, package_path=package_path
             indject_string(base_html,
                            package + '__base_finally', insertion_string, after=False,
                            reference_regex="</body>", is_template=True,
-                           delete_only=delete_only, verbosity=verbosity)
+                           delete_only=delete_only, verbosity=verbosity, interactive=interactive)
             # if verbosity >= 2 and not delete_only:
             #     print(f"    block in base_finally injected")
             # if verbosity >= 3 and delete_only:
@@ -208,7 +208,7 @@ def execute_installation_file(package, settings, urls, package_path=package_path
             file_path = join(project_level_file_path, name_in_file_system)
             Path(file_path).touch()
             indject_string(file_path, package, insertion_string,
-                           delete_only=delete_only, verbosity=verbosity)
+                           delete_only=delete_only, verbosity=verbosity, interactive=interactive)
             # if verbosity >= 2:
             #     print(f"    {package} has a {file_name} declaration")
             #     print(f'    Inserting {name_in_file_system} in project configuration directory')
@@ -240,7 +240,7 @@ def execute_installation_file(package, settings, urls, package_path=package_path
                 Path(file_path).touch()  # make sure file exists
                 indject_string(file_path, package, insertion_string,
                                delete_only=not include_this_app,
-                               verbosity=verbosity)  # delete if excluded!
+                               verbosity=verbosity, interactive=interactive)  # delete if excluded!
                 # if verbosity >= 2:
                     # print(f'    Inserting {name_in_file_system} in app "{app["label"]}"')
                     # print(f'    ........................ in app "{app["label"]}"')

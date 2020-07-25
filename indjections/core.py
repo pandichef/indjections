@@ -49,13 +49,16 @@ def indject_string(file_name, package_name, insert_string, is_template=False,
 
     # if re.search(f"""\n\n{_o2}### block: {package_name}/lock ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}""",
     if re.search(f"""{_o2}### block: {package_name}/lock ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}\n""",
-            original_file_string) and not delete_only:  # note: this means that locked blocks should also be deleted
+            original_file_string) and not delete_only:
+        # i.e., block/lock found not deleting
         if verbosity >= 2:
             # print(f"    {package_name} block found and locked in {basename(file_name)}. Doing nothing.")
             print(f"    Block found and already locked in {basename(file_name)}")
     else:
+        # i.e., block found or deleting
         lets_lock_it = False
-        if interactive and not delete_only:  # If text changed, ask user if they'd like the lock the file
+        # if interactive and not delete_only:  # If text changed, ask user if they'd like the lock the file
+        if interactive:  # If text changed, ask user if they'd like the lock the file
             try:
                 matched_text = re.search(
                     f"""{_o2}### block: {package_name} ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}\n""",
@@ -65,7 +68,7 @@ def indject_string(file_name, package_name, insert_string, is_template=False,
             # get user input only if the string changed
             if matched_text and matched_text != \
                     f"""{_o2}### block: {package_name} ###{_c}{insert_string}{_o2}### endblock: {package_name} ###{_c}\n""":
-                input_string = f"    Altered block found in {basename(file_name)}. Would you like to lock rather than overwrite? (y/N)"
+                input_string = f"... Altered {package_name} block found in {basename(file_name)}\n... Would you like to lock rather than overwrite? (y/N)"
                 user_input = input(input_string)
                 if user_input in ['Y', 'y', 'yes', 'Yes', "YES"]:
                     file_string = original_file_string.replace(
@@ -86,6 +89,16 @@ def indject_string(file_name, package_name, insert_string, is_template=False,
                     file_string,
                     f"""{_o}### block: {package_name} ###{_c}{insert_string}{_o}### endblock: {package_name} ###{_c}\n""",
                     reference_regex, after)
+
+        if re.search(
+                f"""{_o2}### block: {package_name}/lock ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}\n""",
+                file_string) and delete_only:
+            input_string = f"... {package_name}/lock block found in {basename(file_name)}\n... Would you like to lock rather than delete? (y/N)"
+            user_input = input(input_string) if interactive else "Y"  # for tests to pass
+            if user_input not in ['Y', 'y', 'yes', 'Yes', "YES"]:
+                file_string = re.sub(
+                    f"""{_o2}### block: {package_name}/lock ###{_c}(\n|.)*{_o2}### endblock: {package_name} ###{_c}\n""",
+                    "", file_string)
 
         with open(file_name, 'w') as f:  # https://docs.python.org/3/tutorial/inputoutput.html#reading-and-writing-files
             f.write(file_string)
