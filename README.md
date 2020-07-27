@@ -127,12 +127,29 @@ and project setup.
 ### Why do I need another package?
 I got tired of installing packages by hand.  This project has a similar goal to 
 [Cookiecutter Django](https://github.com/pydanny/cookiecutter-django),
-but takes it to the next level.  With Django's native `django-admin startproject` and 
+but takes things to the next level.  With Django's native `django-admin startproject` and 
 [Cookiecutter Django](https://github.com/pydanny/cookiecutter-django), you get 
 boilerplate code for a _new_ project.  With `indjections`, you can add additional
 Django packages and boilerplate code will added in the right places with reasonable
-defaults.  (Typically, the defaults chosen are those highlighted in the package's
-documentation installation, quickstart, or tutorial pages.)
+defaults.  (The defaults are typically chosen to mirror the documentation 
+installation, quickstart, or tutorial pages.)
+
+More generally, there seemed to be an odd inconsistency between Python package
+ distribution and Django package distribution.  With regular Python packages, `pip install` 
+ is expected to work out-of-the-box.  In contrast, with Django packages, after you
+ `pip install`, you often need to do manual work to get a packages to work with your project.
+ `indjections` eliminates the need for these manual steps.
+
+Additionally, Django projects often need tools that cannot readily be shipped with
+`pip install`.  For example, how would you "install" a [React.js](https://reactjs.org/) front end
+into an existing Django project?  There isn't a straightforward way to do this.
+The current solutions are to painstakingly work through a tutorial ([example](https://www.valentinog.com/blog/drf/))
+or use some kind Django/React.js project template ([example](https://github.com/chopdgd/cookiecutter-django-reactjs).  
+The latter usually works for simple projects.  But what
+ if you want to merge features from two different templates?  And what if you want to
+ start your project with the latest version of Django?  With `indjections`, you
+ can write installation files that describe all the steps needed to integrate Django
+ with React.js.
 
 ### How do I create my own installation file?
 `indjections` looks for a module named `indjections.packages.{package_name}`.
