@@ -137,14 +137,14 @@ installation, quickstart, or tutorial pages.)
 More generally, there seemed to be an odd inconsistency between Python package
  distribution and Django package distribution.  With regular Python packages, `pip install` 
  is expected to work out-of-the-box.  In contrast, with Django packages, after you
- `pip install`, you often need to do manual work to get a packages to work with your project.
+ `pip install`, you often need to do manual work to get a package to work with your project.
  `indjections` eliminates the need for these manual steps.
 
 Additionally, Django projects often need tools that cannot readily be shipped with
 `pip install`.  For example, how would you "install" a [React.js](https://reactjs.org/) front end
 into an existing Django project?  There isn't a straightforward way to do this.
 The current solutions are to painstakingly work through a tutorial ([example](https://www.valentinog.com/blog/drf/))
-or use some kind Django/React.js project template ([example](https://github.com/chopdgd/cookiecutter-django-reactjs).  
+or use some kind Django/React.js project template ([example](https://github.com/chopdgd/cookiecutter-django-reactjs)).
 The latter usually works for simple projects.  But what
  if you want to merge features from two different templates?  And what if you want to
  start your project with the latest version of Django?  With `indjections`, you
