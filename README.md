@@ -120,6 +120,17 @@ INDJECTIONS_SETTINGS = {
 }
 ```
 
+`indjections` also supports installation from packages defined in `setup.cfg` as
+described [here](https://setuptools.readthedocs.io/en/latest/setuptools.html#configuring-setup-using-setup-cfg-files).
+To enable this feature, add the following to your project's `settings.py`:
+```python
+INDJECTIONS_SETTINGS = {
+    'USE_SETUP_CFG': True,
+}
+```
+Note that this will only install packages listed under `install_requires`.  `extras_require`
+declarations will be ignored.
+
 ### Does this package run anything in production?
 No.  `indjections` is only used during development to help with Django configurations 
 and project setup.
