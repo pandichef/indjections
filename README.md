@@ -125,15 +125,16 @@ No.  `indjections` is only used during development to help with Django configura
 and project setup.
  
 ### Why do I need another package?
-I got tired of installing packages by hand.  This project has a similar goal to [Cookiecutter Django](https://github.com/pydanny/cookiecutter-django).
-I didn't love the cookiecutter approach, so I wrote `indjections` as an alternative.
-[Cookiecutter Django](https://github.com/pydanny/cookiecutter-django) is a top down approach where packages are all bundled together.
-So if you don't like something, you need to spend time removing code (or writing your own cookiecutter).
-`indjections` is a bottom up approach i.e., you can do the usual `django-admin startproject {project_name}`
-and then let `python manage.py indject` insert code in the right places.
+I got tired of installing packages by hand.  This project has a similar goal to 
+[Cookiecutter Django](https://github.com/pydanny/cookiecutter-django),
+but takes it to the next level.  With Django's native `django-admin startproject` and 
+[Cookiecutter Django](https://github.com/pydanny/cookiecutter-django), you get 
+boilerplate code for a _new_ project.  With `indjections`, you can add additional
+Django packages and boilerplate code will added in the right places with reasonable
+defaults.  (Typically, the defaults chosen are those highlighted in the package's
+documentation installation, quickstart, or tutorial pages.)
 
 ### How do I create my own installation file?
-
 `indjections` looks for a module named `indjections.packages.{package_name}`.
 This declaratively defines 6 locations in a Django project:
 
